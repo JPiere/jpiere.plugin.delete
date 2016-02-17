@@ -1,0 +1,22 @@
+CREATE TABLE adempiere.JP_CustomDeleteProfileLine
+(
+  JP_CustomDeleteProfileLine_ID numeric(10,0) NOT NULL,
+  JP_CustomDeleteProfileLine_UU character varying(36) DEFAULT NULL::character varying,
+  AD_Client_ID numeric(10,0) NOT NULL,
+  AD_Org_ID numeric(10,0) NOT NULL,
+  IsActive character(1) NOT NULL DEFAULT 'Y'::bpchar,
+  Created timestamp without time zone NOT NULL DEFAULT now(),
+  CreatedBy numeric(10,0) NOT NULL,
+  Updated timestamp without time zone NOT NULL DEFAULT now(),
+  UpdatedBy numeric(10,0) NOT NULL,
+
+  JP_CustomDeleteProfile_ID numeric(10,0) NOT NULL,
+  seqno numeric(10,0) NOT NULL,
+  AD_Column_ID numeric(10,0) NOT NULL,
+  Description character varying(255),
+  AD_Table_ID numeric(10,0) NOT NULL,
+  JP_TreatForeignKey character varying(3) NOT NULL DEFAULT 'TSN'::character varying,
+  JP_ForeignKey_Value numeric(10,0) DEFAULT 0::numeric,
+
+  CONSTRAINT JP_CustomDeleteProfileLine_pkey PRIMARY KEY (JP_CustomDeleteProfileLine_ID)
+)

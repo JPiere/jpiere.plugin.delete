@@ -1,0 +1,43 @@
+CREATE TABLE adempiere.T_DeleteClientLogJP
+(
+  T_DeleteClientLogJP_ID numeric(10,0) NOT NULL,
+  T_DeleteClientLogJP_UU character varying(36) DEFAULT NULL::character varying,
+  AD_Client_ID numeric(10,0) NOT NULL,
+  AD_Org_ID numeric(10,0) NOT NULL,
+  IsActive character(1) NOT NULL DEFAULT 'Y'::bpchar,
+  Created timestamp without time zone NOT NULL DEFAULT now(),
+  CreatedBy numeric(10,0) NOT NULL,
+  Updated timestamp without time zone NOT NULL DEFAULT now(),
+  UpdatedBy numeric(10,0) NOT NULL,
+
+  AD_Pinstance_ID numeric(10,0) NOT NULL,
+  Description character varying(255),
+  JP_Delete_Client character varying(2),
+  JP_DeleteProfile_ID numeric(10,0),
+  JP_CustomDeleteProfile_ID numeric(10,0),
+  JP_CustomDeleteProfileLine_ID numeric(10,0),
+  JP_TreatForeignKey character varying(3) ,
+
+  SQLStatement text,
+  Help character varying(2000),
+
+  AD_Table_ID numeric(10,0),
+  TableName character varying(40),
+  AccessLevel character(1),
+  ad_window_id numeric(10,0),
+  AD_Column_ID numeric(10,0),
+  ColumnName character varying(30),
+  ColumnSql character varying(2000),
+  AD_Reference_ID numeric(10,0),
+  AD_Reference_Value_ID numeric(10,0),
+  AD_Val_Rule_ID numeric(10,0),
+  FKConstraintName character varying(30),
+  FKConstraintType character(1),
+  DefaultValue character varying(2000),
+  IsKey character(1) ,
+  IsParent character(1) ,
+  IsMandatory character(1),
+  Mandatorylogic character varying(2000),
+
+  CONSTRAINT T_DeleteClientLogJP_pkey PRIMARY KEY (T_DeleteClientLogJP_ID)
+)
