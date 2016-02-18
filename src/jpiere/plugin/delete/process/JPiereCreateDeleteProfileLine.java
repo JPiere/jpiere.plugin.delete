@@ -70,7 +70,7 @@ public class JPiereCreateDeleteProfileLine extends SvrProcess
 
 		if(customDeleteProfile.getCustomDeleteProfileLines().length != 0)
 		{
-			String msg = "Error : There are some Lines already";//TODO 多言語化
+			String msg = Msg.getElement(getCtx(), "JP_Delete_AlreadySomeLines");//Error : There are some lines already
 			throw new Exception(msg);
 		}
 

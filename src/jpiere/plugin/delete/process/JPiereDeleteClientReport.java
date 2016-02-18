@@ -237,7 +237,7 @@ public class JPiereDeleteClientReport extends SvrProcess
 			log.saveEx();
 		}
 
-		if(!p_IsAllowLogging && !m_DeleteProfile.getJP_Delete_Client().equals(JPiereDeleteClientRecords.TYPE_INITIALIZE_CLIENT))
+		if(!p_IsAllowLogging)
 		{
 			return "";
 		}

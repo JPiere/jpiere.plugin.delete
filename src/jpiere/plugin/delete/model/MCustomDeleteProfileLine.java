@@ -13,16 +13,11 @@
  *****************************************************************************/
 package jpiere.plugin.delete.model;
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Properties;
-
-import javax.swing.table.TableColumn;
 
 import org.compiere.model.MRefTable;
 import org.compiere.model.MTable;
-import org.compiere.util.DB;
 import org.compiere.util.DisplayType;
 import org.compiere.util.Msg;
 
@@ -128,53 +123,4 @@ public class MCustomDeleteProfileLine extends X_JP_CustomDeleteProfileLine {
 
 		return m_Parent;
 	}
-
-	private TableColumn getRefTableColumn(Properties ctx, int Column_ID)
-	{
-
-		String ColumnName = "";
-		int AD_Reference_Value_ID = 0;
-		boolean IsParent = false;
-		String ValidationCode = "";
-		//
-		String sql = "SELECT rt.TableName, rt.ColumnName"
-			+ "FROM AD_Column c INNER JOIN AD_Reference rf ON(c.AD_Reference_Value_ID = rf.AD_Reference_ID) "
-			+ " INNER JOIN AD_Ref_Table rt ON (rf.AD_Reference_ID = rt.AD_Reference_ID) "
-			+ " LEFT OUTER JOIN AD_Val_Rule vr ON (c.AD_Val_Rule_ID=vr.AD_Val_Rule_ID) "
-			+ "WHERE c.AD_Column_ID=?";
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		try
-		{
-			pstmt = DB.prepareStatement(sql, null);
-			pstmt.setInt(1, Column_ID);
-			//
-			rs = pstmt.executeQuery();
-			if (rs.next())
-			{
-				ColumnName = rs.getString(1);
-				AD_Reference_Value_ID = rs.getInt(2);
-				IsParent = "Y".equals(rs.getString(3));
-				ValidationCode = rs.getString(4);
-			}
-//			else
-//				s_log.log(Level.SEVERE, "Column Not Found - AD_Column_ID=" + Column_ID);
-		}
-		catch (SQLException ex)
-		{
-//			s_log.log(Level.SEVERE, "create", ex);
-		}
-		finally
-		{
-			DB.close(rs, pstmt);
-			rs = null;
-			pstmt = null;
-		}
-		//
-
-
-		return null;
-	}
-
-
 }
