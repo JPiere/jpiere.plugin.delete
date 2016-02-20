@@ -39,5 +39,13 @@ CREATE TABLE adempiere.T_DeleteClientLogJP
   IsMandatory character(1),
   Mandatorylogic character varying(2000),
 
+  JP_DeleteProfile_ID numeric(10,0) ,
+  JP_TreatForeignKey character varying(3) ,
+  JP_CustomDeleteProfileLine_ID numeric(10,0) ,
+  Referenced_Table_ID numeric(10,0) ,
+  IsAllowLogging character(1) DEFAULT 'N'::bpchar,
+  LookupClientID numeric(10,0) DEFAULT NULL::numeric,
+  IsTruncateJP character(1) DEFAULT 'N'::bpchar,
+
   CONSTRAINT T_DeleteClientLogJP_pkey PRIMARY KEY (T_DeleteClientLogJP_ID)
 )
