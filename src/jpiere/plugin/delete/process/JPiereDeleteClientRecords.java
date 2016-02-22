@@ -32,10 +32,14 @@ import org.adempiere.util.IProcessUI;
 import org.compiere.db.AdempiereDatabase;
 import org.compiere.model.MAcctSchema;
 import org.compiere.model.MAcctSchemaElement;
+import org.compiere.model.MBPartner;
 import org.compiere.model.MClient;
 import org.compiere.model.MColumn;
+import org.compiere.model.MCostType;
+import org.compiere.model.MRole;
 import org.compiere.model.MSequence;
 import org.compiere.model.MTable;
+import org.compiere.model.MUser;
 import org.compiere.model.Query;
 import org.compiere.process.ProcessInfoParameter;
 import org.compiere.process.SvrProcess;
@@ -373,8 +377,65 @@ public class JPiereDeleteClientRecords extends SvrProcess
 		{
 			createLog("", "", "##### RENEAME CLIENT #####", "", "", "",false);
 			MClient client = MClient.get(getCtx(), p_LookupClientID);
+			String oldName = client.getName();
 			client.setName(name2);
 			client.saveEx(get_TrxName());
+
+			ArrayList<Integer> AD_Role_IDs = getIDList("AD_Role_ID", "AD_Role", null, TYPE_INITIALIZE_CLIENT);
+			for(Integer AD_Role_ID : AD_Role_IDs)
+			{
+				MRole role = new MRole(getCtx(), AD_Role_ID.intValue(), get_TrxName());
+				if(role.getName().contains(oldName))
+				{
+					role.setName(role.getName().replace(oldName, name2));
+					role.saveEx(get_TrxName());
+				}
+			}
+
+			ArrayList<Integer> AD_User_IDs = getIDList("AD_User_ID", "AD_User", null, TYPE_INITIALIZE_CLIENT);
+			for(Integer AD_User_ID : AD_User_IDs)
+			{
+				MUser user = new MUser(getCtx(), AD_User_ID.intValue(), get_TrxName());
+				if(user.getName().contains(oldName))
+				{
+					user.setName(user.getName().replace(oldName, name2));
+					user.saveEx(get_TrxName());
+				}
+			}
+
+			ArrayList<Integer> C_BPartner_IDs = getIDList("C_BPartner_ID", "C_BPartner", null, TYPE_INITIALIZE_CLIENT);
+			for(Integer C_BPartner_ID : C_BPartner_IDs)
+			{
+				MBPartner bp = new MBPartner(getCtx(), C_BPartner_ID.intValue(), get_TrxName());
+				if(bp.getName().contains(oldName))
+				{
+					bp.setName(bp.getName().replace(oldName, name2));
+					bp.saveEx(get_TrxName());
+				}
+			}
+
+			ArrayList<Integer> C_AcctSchema_IDs = getIDList("C_AcctSchema_ID", "C_AcctSchema", null, TYPE_INITIALIZE_CLIENT);
+			for(Integer C_AcctSchema_ID : C_AcctSchema_IDs)
+			{
+				MAcctSchema as = new MAcctSchema(getCtx(), C_AcctSchema_ID.intValue(), get_TrxName());
+				if(as.getName().contains(oldName))
+				{
+					as.setName(as.getName().replace(oldName, name2));
+					as.saveEx(get_TrxName());
+				}
+			}
+
+			ArrayList<Integer>  M_CostType_IDs = getIDList(" M_CostType_ID", " M_CostType", null, TYPE_INITIALIZE_CLIENT);
+			for(Integer  M_CostType_ID :  M_CostType_IDs)
+			{
+				MCostType costType = new MCostType(getCtx(), M_CostType_ID.intValue(),get_TrxName());
+				if(costType.getName().contains(oldName))
+				{
+					costType.setName(costType.getName().replace(oldName, name2));
+					costType.saveEx(get_TrxName());
+				}
+			}
+
 		}
 
 		return "";
@@ -784,6 +845,9 @@ public class JPiereDeleteClientRecords extends SvrProcess
 				executeDeleteSQL(tableName, createWhereInIDs(tableName+"_ID", IDs, WHERE_NOT_IN), deleteProfile.getJP_Delete_Client(), p_IsTruncateJP,"CUSTOM_TABLE");
 				if(deleteProfile.getJP_Delete_Client().equals(TYPE_ALL_TRANSACTION) && p_IsTruncateJP)//skip
 				{
+					;//Nothing to do because of CASCADE;
+				}else{
+
 					bulkUpdate_canReferTableDirect(tableName, IDs, WHERE_NOT_IN, treat, value, excludeTables, WHERE_NOT_IN, deleteProfile.getJP_Delete_Client());
 					bulkUpdate_canNotReferTableDirect(tableName, IDs, WHERE_NOT_IN, treat, value, excludeTables, WHERE_NOT_IN, deleteProfile.getJP_Delete_Client());
 
