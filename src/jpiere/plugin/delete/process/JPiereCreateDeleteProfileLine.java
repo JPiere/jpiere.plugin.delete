@@ -102,9 +102,6 @@ public class JPiereCreateDeleteProfileLine extends SvrProcess
 				if(table.getAccessLevel().equals(String.valueOf(MTable.ACCESSLEVEL_SYSTEM)))//System Table
 					continue;
 
-//				if(customDeleteProfile.getAD_Table_ID() == table.getAD_Table_ID())//Same Table and Same Column
-//					continue;
-
 				MColumn[] columns = table.getColumns(false);
 				MColumn col = null;
 				for(int i = 0 ; i < columns.length; i++)

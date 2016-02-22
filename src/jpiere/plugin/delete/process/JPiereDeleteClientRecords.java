@@ -486,6 +486,7 @@ public class JPiereDeleteClientRecords extends SvrProcess
 
 			if(!type.equals(TYPE_ALL_TRANSACTION) && !p_IsTruncateJP)//Skip when truncate
 			{
+				addLog("##### IF MANDATORY DELETE ELSE SET NULL TO RECORDS THAT CAN REFER TRANSACTION TABLES DIRECTLY #####");
 				createLog("", "", "### IF MANDATORY DELETE ELSE SET NULL TO RECORDS THAT CAN REFER TRANSACTION TABLES DIRECTLY ###", "", "", "",false);
 				int returnInt = 0;
 				for(int i = 0; i< TrxTables.length; i++)
@@ -498,6 +499,7 @@ public class JPiereDeleteClientRecords extends SvrProcess
 				createLog("", "", "COMMIT", "", "", "",false);
 
 				//Set null to Records that can't refer Transaction Tables Directly(Not TableName_ID)
+				addLog("### IF MANDATORY DELETE ELSE SET NULL TO RECORDS THAT CAN NOT REFER TRANSACTION TABLES DIRECTLY ###");
 				createLog("", "", "### IF MANDATORY DELETE ELSE SET NULL TO RECORDS THAT CAN NOT REFER TRANSACTION TABLES DIRECTLY ###", "", "", "",false);
 				for(int i = 0; i< TrxTables.length; i++)
 				{
@@ -510,6 +512,7 @@ public class JPiereDeleteClientRecords extends SvrProcess
 			}//Skip when truncate
 
 			//Initialize Document Number that are used by Document Type only.
+			addLog("### INITIALIZE DOCUMENT NUMBER THAT ARE USED BY DOCUMENT TYPE ONLY ###");
 			createLog("", "", "### INITIALIZE DOCUMENT NUMBER THAT ARE USED BY DOCUMENT TYPE ONLY ###", "", "", "",false);
 			ArrayList<Integer> DocSequenceList = getIDList("DocNoSequence_ID", "C_DocType", "DocNoSequence_ID is not null", p_JP_Delete_Client);
 
@@ -595,6 +598,7 @@ public class JPiereDeleteClientRecords extends SvrProcess
 		createLog("","",message, "","","", true);
 
 		//Delete Table Except TrxTables and IniTables, Custom Delete Tables
+		addLog("### DELETE TABLES EXCEPT TRXTABLES AND INITABLES, CUSTOM DELETE TABLES ###");
 		createLog("","","### DELETE TABLES EXCEPT TRXTABLES AND INITABLES, CUSTOM DELETE TABLES ###","","","", true);
 		ArrayList<String> list_of_DeleteTables = new ArrayList<String>();
 		for(String AD_TABLE : TABLELIST_AD)
@@ -674,16 +678,34 @@ public class JPiereDeleteClientRecords extends SvrProcess
 		Tables_DeleteAllRecords = stringArray_Merge(list_of_DeleteTables.toArray(new String[list_of_DeleteTables.size()]),TrxTables);
 		Tables_Not_DeleteAllRecords = stringArray_Subtraction(TABLELIST_AD.toArray(new String[TABLELIST_AD.size()]), Tables_DeleteAllRecords);
 
+		addLog("### SPECIAL TREATMENT FOR TABLES THAT DELETE ALL DATA. REFERRED RECORDS DELETE. ###");
+		createLog("","","### SPECIAL TREATMENT FOR TABLES THAT DELETE ALL DATA. REFERRED RECORDS DELETE. ###","","","", true);
+		for(String table : list_of_DeleteTables)
+		{
+			//for C_AcctSchema_Element
+			if(table.equalsIgnoreCase("C_Campaign"))
+				executeDeleteSQL("C_AcctSchema_Element", "ElementType = 'MC'", TYPE_INITIALIZE_CLIENT, false);
+			else if(table.equalsIgnoreCase("C_Activity"))
+				executeDeleteSQL("C_AcctSchema_Element", "ElementType = 'AY'", TYPE_INITIALIZE_CLIENT, false);
+			else if(table.equalsIgnoreCase("C_Activity"))
+				executeDeleteSQL("C_AcctSchema_Element", "ElementType = 'AY'", TYPE_INITIALIZE_CLIENT, false);
+			else if(table.equalsIgnoreCase("C_Project"))
+				executeDeleteSQL("C_AcctSchema_Element", "ElementType = 'PJ'", TYPE_INITIALIZE_CLIENT, false);
+			else if(table.equalsIgnoreCase("C_SalesRegion"))
+				executeDeleteSQL("C_AcctSchema_Element", "ElementType = 'SR'", TYPE_INITIALIZE_CLIENT, false);
+		}
+
 		//Test Code
 //		String[] excludeTables = {"AD_Table","AD_Column"};
 //		String[] targetTables = stringArray_Subtraction(Tables_Not_DeleteAllRecords,excludeTables);
 
 		//Refer Table set Null
-		createLog("","","### SET NULL TO COLUMNS THAT ARE REERRED FROM TABLE THAT RECORDS IS ALL DELETE ###","","","", true);
+		addLog("### GENERAL TREATMENT FOR TABLES THAT DELETE ALL DATA. SET NULL TO COLUMN OF FK ###");
+		createLog("","","### GENERAL TREATMENT FOR TABLES THAT DELETE ALL DATA. SET NULL TO COLUMN OF FK ###","","","", true);
 		int returnInt = 0;
 		for(String table : list_of_DeleteTables)
 		{
-			if(isAccessLevelSystemTable(table, true))
+			if(isAccessLevelSystemTable(table, true))//For example AD_Clumn, Not need to set null to AD_ImpFormat_Row.AD_Column.
 				continue;
 
 			returnInt = bulkUpdate_canReferTableDirect(table, null, WHERE_NOT_IN, TREAT_SET_NULL, 0, Tables_Not_DeleteAllRecords, WHERE_IN, TYPE_INITIALIZE_CLIENT);
@@ -702,7 +724,7 @@ public class JPiereDeleteClientRecords extends SvrProcess
 		//Delete Role
 		deleteRole(m_DeleteProfile.getJP_AD_Role_ID_Where());
 
-		//Dlete User
+		//Delete User
 		deleteUser(m_DeleteProfile.getJP_AD_User_ID_Where());
 
 		//Delete BPartner
@@ -711,7 +733,7 @@ public class JPiereDeleteClientRecords extends SvrProcess
 		//Delete Product
 		deleteProduct(m_DeleteProfile.getJP_M_Product_ID_Where());
 
-		//Delete Custom Table
+		//Delete Tables of Custom Delete Profile
 		doCustomDeleteProfile(m_DeleteProfile);
 
 		//Rest Table ID
@@ -1210,6 +1232,7 @@ public class JPiereDeleteClientRecords extends SvrProcess
 	 */
 	private String deleteOrg(String where) throws Exception
 	{
+		addLog("##### DELETE ORGANIZATION #####");
 		createLog("", "", "##### DELETE ORGANIZATION #####","","","",true);
 
 		ArrayList<Integer> AD_Org_IDs = getIDList("AD_Org_ID", "AD_Org", where, TYPE_INITIALIZE_CLIENT);
@@ -1330,6 +1353,7 @@ public class JPiereDeleteClientRecords extends SvrProcess
 	 */
 	private String deleteRole(String where) throws Exception
 	{
+		addLog("##### DELETE ROLE #####");
 		createLog("", "", "##### DELETE ROLE #####","","","",true);
 
 		ArrayList<Integer> AD_Role_IDs = getIDList("AD_Role_ID", "AD_Role", where, TYPE_INITIALIZE_CLIENT);
@@ -1367,6 +1391,7 @@ public class JPiereDeleteClientRecords extends SvrProcess
 	 */
 	private String deleteUser(String where)throws Exception
 	{
+		addLog("##### DELETE USER #####");
 		createLog("", "", "##### DELETE USER #####","","","",true);
 
 		createLog("", "", "### UPDATE All CreatedBy and UpdatedBy COLUMNS TO Super User ###","","","",true);
@@ -1412,7 +1437,8 @@ public class JPiereDeleteClientRecords extends SvrProcess
 
 	private String deleteBPartner(String where)throws Exception
 	{
-		createLog("", "", "##### DELETE Business Partner #####","","","",true);
+		addLog("### DELETE BUSINESS PARTNER ###");
+		createLog("", "", "##### DELETE BUSINESS PARTNER ####","","","",true);
 
 		ArrayList<Integer> C_BP_IDs = getIDList("C_BPartner_ID", "C_BPartner", where, TYPE_INITIALIZE_CLIENT);
 
@@ -1432,6 +1458,7 @@ public class JPiereDeleteClientRecords extends SvrProcess
 
 	private String deleteProduct(String where)throws Exception
 	{
+		addLog("##### DELETE PRODUCT #####");
 		createLog("", "", "##### DELETE PRODUCT #####","","","",true);
 
 		ArrayList<Integer> M_Product_IDs = getIDList("M_Product_ID", "M_Product", where, TYPE_INITIALIZE_CLIENT);
@@ -2839,6 +2866,7 @@ public class JPiereDeleteClientRecords extends SvrProcess
 							//Tax
 							,"C_TaxCategory","C_TaxCategory_Trl","C_Tax","C_Tax_Acct","C_TaxPostal"
 							,"C_Tax_Trl","C_TaxProvider","C_TaxProviderCfg"
+							,"C_TaxGroup"
 
 							//Document Type
 							,"C_DocType","C_DocType_Trl"
@@ -2893,6 +2921,7 @@ public class JPiereDeleteClientRecords extends SvrProcess
 							,"M_Product_Category","M_Product_Category_Trl","M_Product_Category_Acct"
 							,"M_Product","M_Product_Trl","M_Product_BOM","M_Substitute","M_RelatedProduct"
 							,"M_Replenish","M_Product_PO","C_BPartner_Product","M_Product_Acct"
+							//,"S_ExpenseType","S_Resource"
 
 							//Price List
 							,"M_PriceList","M_PriceList_Version","M_ProductPrice","M_ProductPriceVendorBreak"
@@ -2921,7 +2950,7 @@ public class JPiereDeleteClientRecords extends SvrProcess
 							/*************************************************************************************/
 							//Report Format
 							,"AD_PrintFormat","AD_PrintFormat_Trl","AD_PrintFormatItem","AD_PrintFormatItem_Trl","AD_PrintGraph"
-							,"AD_PrintForm","AD_PrintColor","AD_PrintFont","AD_PrintPaper"
+							,"AD_PrintForm","AD_PrintColor","AD_PrintFont","AD_PrintPaper","AD_PrintTableFormat"
 
 							//Import Format
 							,"AD_ImpFormat","AD_ImpFormat_Row"
@@ -2946,7 +2975,7 @@ public class JPiereDeleteClientRecords extends SvrProcess
 							,"AD_TreeNodeU1","AD_TreeNodeU2","AD_TreeNodeU3","AD_TreeNodeU4"
 
 							//Other
-							,"AD_Image"
+							,"AD_Image","AD_Password_History","AD_CtxHelp","AD_ReplicationStrategy","AD_StorageProvider"
 
 	};
 

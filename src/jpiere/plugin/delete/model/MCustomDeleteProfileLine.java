@@ -46,10 +46,34 @@ public class MCustomDeleteProfileLine extends X_JP_CustomDeleteProfileLine {
 				return false;
 			}
 
+
+			if(!DisplayType.isID(getAD_Column().getAD_Reference_ID()))
+			{
+				//Irrelevant Column. Not Referenced Table.
+				log.saveError("Error", Msg.getMsg(getCtx(), "JP_Delete_NotReferencedTable"));
+				return false;
+			}else{
+
+				//Can not check.
+				if(getAD_Column().getAD_Reference_ID() == DisplayType.Account
+						|| getAD_Column().getAD_Reference_ID() == DisplayType.Assignment
+						|| getAD_Column().getAD_Reference_ID() == DisplayType.Chart
+						|| getAD_Column().getAD_Reference_ID() == DisplayType.Color
+						|| getAD_Column().getAD_Reference_ID() == DisplayType.Image
+						|| getAD_Column().getAD_Reference_ID() == DisplayType.Location
+						|| getAD_Column().getAD_Reference_ID() == DisplayType.Locator
+						|| getAD_Column().getAD_Reference_ID() == DisplayType.Image
+						)
+				{
+					return true;
+				}
+
+			}
+
 			if(getAD_Table_ID() == getParent().getAD_Table_ID()) //Same Table
 			{
 				//Same Table and Same Column.
-				if(getAD_Column().getColumnName().toUpperCase().equals((getParent().getAD_Table().getTableName()+"_ID").toUpperCase()))
+				if(getAD_Column().getColumnName().equalsIgnoreCase((getParent().getAD_Table().getTableName()+"_ID")))
 				{
 					//Table and Column are the same as Referenced Table
 					log.saveError("Error", Msg.getMsg(getCtx(), "JP_Delete_SameTableColumn"));
@@ -57,8 +81,27 @@ public class MCustomDeleteProfileLine extends X_JP_CustomDeleteProfileLine {
 				}
 
 				//Same Table and Difference Column.
-				if(DisplayType.isID(getAD_Column().getAD_Reference_ID()))
+				MRefTable refTable = new MRefTable(getCtx(), getAD_Column().getAD_Reference_Value_ID(), null);
+				if(refTable == null || refTable.get_ID()== 0)
 				{
+					//Irrelevant Column. Not Referenced Table.
+					log.saveError("Error", Msg.getMsg(getCtx(), "JP_Delete_NotReferencedTable"));
+					return false;
+
+				}else if(refTable.getAD_Table_ID() != getParent().getAD_Table_ID()){//Not Same Table
+					//Irrelevant Column. Not Referenced Table.
+					log.saveError("Error", Msg.getMsg(getCtx(), "JP_Delete_NotReferencedTable"));
+					return false;
+				}
+
+			}else{
+
+				//Difference Table and Same PK & FK Column Name
+				if(getAD_Column().getColumnName().equalsIgnoreCase((getParent().getAD_Table().getTableName()+"_ID")))
+				{
+					;//Nothing to do;
+				}else{ //Deference Table and Deference Column
+
 					MRefTable refTable = new MRefTable(getCtx(), getAD_Column().getAD_Reference_Value_ID(), null);
 					if(refTable == null || refTable.get_ID()== 0)
 					{
@@ -71,42 +114,6 @@ public class MCustomDeleteProfileLine extends X_JP_CustomDeleteProfileLine {
 						log.saveError("Error", Msg.getMsg(getCtx(), "JP_Delete_NotReferencedTable"));
 						return false;
 					}
-
-				}else{
-					//Irrelevant Column. Not Referenced Table.
-					log.saveError("Error", Msg.getMsg(getCtx(), "JP_Delete_NotReferencedTable"));
-					return false;
-				}
-
-			}else{
-
-				//Difference Table and Same PK & FK Column Name
-				if(getAD_Column().getColumnName().toUpperCase().equals((getParent().getAD_Table().getTableName()+"_ID").toUpperCase()))
-				{
-					;//Nothing to do;
-				}else{ //Deference Table and Deference Column
-
-					if(DisplayType.isID(getAD_Column().getAD_Reference_ID()))
-					{
-						MRefTable refTable = new MRefTable(getCtx(), getAD_Column().getAD_Reference_Value_ID(), null);
-						if(refTable == null || refTable.get_ID()== 0)
-						{
-							//Irrelevant Column. Not Referenced Table.
-							log.saveError("Error", Msg.getMsg(getCtx(), "JP_Delete_NotReferencedTable"));
-							return false;
-
-						}else if(refTable.getAD_Table_ID() != getParent().getAD_Table_ID()){//Not Same Table
-							//Irrelevant Column. Not Referenced Table.
-							log.saveError("Error", Msg.getMsg(getCtx(), "JP_Delete_NotReferencedTable"));
-							return false;
-						}
-
-					}else{
-						//Irrelevant Column. Not Referenced Table.
-						log.saveError("Error", Msg.getMsg(getCtx(), "JP_Delete_NotReferencedTable"));
-						return false;
-					}
-
 				}
 			}
 
