@@ -20,6 +20,12 @@ import java.util.Properties;
 import org.compiere.model.Query;
 import org.compiere.util.Util;
 
+/**
+ * 	Delete Profile.
+ *
+ *  @author Hideaki Hagiwara(h.hagiwara@oss-erp.co.jp)
+ *
+ */
 public class MDeleteProfile extends X_JP_DeleteProfile {
 
 	protected MCustomDeleteProfile[] 	m_CustomDeleteProfiles = null;
@@ -70,7 +76,7 @@ public class MDeleteProfile extends X_JP_DeleteProfile {
 
 	public MCustomDeleteProfile[] getCustomDeleteProfiles()
 	{
-		return getCustomDeleteProfiles(false, null);
+		return getCustomDeleteProfiles(true, null);
 	}	//
 
 

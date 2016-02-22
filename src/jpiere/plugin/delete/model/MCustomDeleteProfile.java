@@ -108,7 +108,7 @@ public class MCustomDeleteProfile extends X_JP_CustomDeleteProfile {
 
 	public MCustomDeleteProfileLine[] getCustomDeleteProfileLines()
 	{
-		return getCustomDeleteProfileLines(false, null);
+		return getCustomDeleteProfileLines(true, null);
 	}	//	getLines
 
 	public MDeleteProfile getParent()

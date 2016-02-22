@@ -375,6 +375,7 @@ public class JPiereDeleteClientRecords extends SvrProcess
 		String name2 = m_DeleteProfile.getName2();
 		if(!Util.isEmpty(name2))
 		{
+			addLog("##### RENEAME CLIENT #####");
 			createLog("", "", "##### RENEAME CLIENT #####", "", "", "",false);
 			MClient client = MClient.get(getCtx(), p_LookupClientID);
 			String oldName = client.getName();
@@ -385,7 +386,7 @@ public class JPiereDeleteClientRecords extends SvrProcess
 			for(Integer AD_Role_ID : AD_Role_IDs)
 			{
 				MRole role = new MRole(getCtx(), AD_Role_ID.intValue(), get_TrxName());
-				if(role.getName().contains(oldName))
+				if(role.get_ID() != 0 && role.getName().contains(oldName))
 				{
 					role.setName(role.getName().replace(oldName, name2));
 					role.saveEx(get_TrxName());
@@ -396,7 +397,7 @@ public class JPiereDeleteClientRecords extends SvrProcess
 			for(Integer AD_User_ID : AD_User_IDs)
 			{
 				MUser user = new MUser(getCtx(), AD_User_ID.intValue(), get_TrxName());
-				if(user.getName().contains(oldName))
+				if(user.get_ID() != 0 && user.getName().contains(oldName))
 				{
 					user.setName(user.getName().replace(oldName, name2));
 					user.saveEx(get_TrxName());
@@ -407,7 +408,7 @@ public class JPiereDeleteClientRecords extends SvrProcess
 			for(Integer C_BPartner_ID : C_BPartner_IDs)
 			{
 				MBPartner bp = new MBPartner(getCtx(), C_BPartner_ID.intValue(), get_TrxName());
-				if(bp.getName().contains(oldName))
+				if(bp.get_ID() != 0 && bp.getName().contains(oldName))
 				{
 					bp.setName(bp.getName().replace(oldName, name2));
 					bp.saveEx(get_TrxName());
@@ -418,7 +419,7 @@ public class JPiereDeleteClientRecords extends SvrProcess
 			for(Integer C_AcctSchema_ID : C_AcctSchema_IDs)
 			{
 				MAcctSchema as = new MAcctSchema(getCtx(), C_AcctSchema_ID.intValue(), get_TrxName());
-				if(as.getName().contains(oldName))
+				if(as.get_ID() != 0 && as.getName().contains(oldName))
 				{
 					as.setName(as.getName().replace(oldName, name2));
 					as.saveEx(get_TrxName());
@@ -429,7 +430,7 @@ public class JPiereDeleteClientRecords extends SvrProcess
 			for(Integer  M_CostType_ID :  M_CostType_IDs)
 			{
 				MCostType costType = new MCostType(getCtx(), M_CostType_ID.intValue(),get_TrxName());
-				if(costType.getName().contains(oldName))
+				if(costType.get_ID() != 0 && costType.getName().contains(oldName))
 				{
 					costType.setName(costType.getName().replace(oldName, name2));
 					costType.saveEx(get_TrxName());
@@ -2962,6 +2963,10 @@ public class JPiereDeleteClientRecords extends SvrProcess
 							//Bank & Account
 							,"C_Bank","C_BankAccount","C_BankAccountDoc","C_BankAccount_Processor","C_BankStatementLoader"
 							,"C_BankAccount_Acct"
+
+							//Finincial Report
+							,"PA_Report","PA_ReportLineSet","PA_ReportLine","PA_ReportSource","PA_ReportColumnSet"
+							,"PA_ReportColumn","PA_ReportCube","PA_Hierarchy"
 
 							/*************************************************************************************/
 

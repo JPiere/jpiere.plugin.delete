@@ -16,6 +16,12 @@ package jpiere.plugin.delete.model;
 import java.sql.ResultSet;
 import java.util.Properties;
 
+/**
+ * 	Delete Client and Initialize Client Log.
+ *
+ *  @author Hideaki Hagiwara(h.hagiwara@oss-erp.co.jp)
+ *
+ */
 public class MDeleteClientLogJP extends X_T_DeleteClientLogJP {
 
 	public MDeleteClientLogJP(Properties ctx, int T_DeleteClientLogJP_ID, String trxName) {

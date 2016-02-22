@@ -21,6 +21,12 @@ import org.compiere.model.MTable;
 import org.compiere.util.DisplayType;
 import org.compiere.util.Msg;
 
+/**
+ * 	Delete Profile Line.
+ *
+ *  @author Hideaki Hagiwara(h.hagiwara@oss-erp.co.jp)
+ *
+ */
 public class MCustomDeleteProfileLine extends X_JP_CustomDeleteProfileLine {
 
 	private MCustomDeleteProfile m_Parent;
