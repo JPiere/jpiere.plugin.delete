@@ -830,25 +830,35 @@ public class JPiereDeleteClientRecords extends SvrProcess
 
 			}else{
 
-				createLog("","","##### DELETE " + customDeleteProfiles[i].getAD_Table().getTableName() + " #####", "","","", true);
-				MCustomDeleteProfileLine[] m_ProfileLines = customDeleteProfiles[i].getCustomDeleteProfileLines();
-				ArrayList<String> list_of_excludeTables = new ArrayList<String>();
-				for(int j = 0; j < m_ProfileLines.length; j++)
+				if(deleteProfile.getJP_Delete_Client().equals(TYPE_ALL_TRANSACTION) && p_IsTruncateJP) //TRUNCATE
 				{
-					list_of_excludeTables.add(m_ProfileLines[j].getAD_Table().getTableName());
-				}
-				String[] excludeTables=list_of_excludeTables.toArray(new String[list_of_excludeTables.size()]);
-				String tableName = customDeleteProfiles[i].getAD_Table().getTableName();
-				ArrayList<Integer> IDs = getIDList(tableName+"_ID", tableName, customDeleteProfiles[i].getWhereClause(), deleteProfile.getJP_Delete_Client());
-				String treat = customDeleteProfiles[i].getJP_TreatForeignKey();
-				int value = customDeleteProfiles[i].getJP_ForeignKey_Value();
+					String tableName = customDeleteProfiles[i].getAD_Table().getTableName();
+					executeDeleteSQL(tableName, null, TYPE_ALL_TRANSACTION, true,"CUSTOM_TABLE_TRUNCATE");
 
-				executeDeleteSQL(tableName, createWhereInIDs(tableName+"_ID", IDs, WHERE_NOT_IN), deleteProfile.getJP_Delete_Client(), p_IsTruncateJP,"CUSTOM_TABLE");
-				if(deleteProfile.getJP_Delete_Client().equals(TYPE_ALL_TRANSACTION) && p_IsTruncateJP)//skip
-				{
-					;//Nothing to do because of CASCADE;
 				}else{
 
+					if(Util.isEmpty(customDeleteProfiles[i].getWhereClause()))
+					{
+						createLog("","","##### DON'T DELETE " + customDeleteProfiles[i].getAD_Table().getTableName() + " #####", "","","", false);
+						continue;
+					}else{
+						createLog("","","##### DELETE " + customDeleteProfiles[i].getAD_Table().getTableName() + " #####", "","","", true);
+					}
+
+					MCustomDeleteProfileLine[] m_ProfileLines = customDeleteProfiles[i].getCustomDeleteProfileLines();
+					ArrayList<String> list_of_excludeTables = new ArrayList<String>();
+					for(int j = 0; j < m_ProfileLines.length; j++)
+					{
+						list_of_excludeTables.add(m_ProfileLines[j].getAD_Table().getTableName());
+					}
+					String[] excludeTables=list_of_excludeTables.toArray(new String[list_of_excludeTables.size()]);
+					String tableName = customDeleteProfiles[i].getAD_Table().getTableName();
+					ArrayList<Integer> IDs = getIDList(tableName+"_ID", tableName, customDeleteProfiles[i].getWhereClause(), deleteProfile.getJP_Delete_Client());
+					String treat = customDeleteProfiles[i].getJP_TreatForeignKey();
+					int value = customDeleteProfiles[i].getJP_ForeignKey_Value();
+
+
+					executeDeleteSQL(tableName, createWhereInIDs(tableName+"_ID", IDs, WHERE_NOT_IN), deleteProfile.getJP_Delete_Client(), p_IsTruncateJP,"CUSTOM_TABLE_DELETE");
 					bulkUpdate_canReferTableDirect(tableName, IDs, WHERE_NOT_IN, treat, value, excludeTables, WHERE_NOT_IN, deleteProfile.getJP_Delete_Client());
 					bulkUpdate_canNotReferTableDirect(tableName, IDs, WHERE_NOT_IN, treat, value, excludeTables, WHERE_NOT_IN, deleteProfile.getJP_Delete_Client());
 
@@ -858,9 +868,9 @@ public class JPiereDeleteClientRecords extends SvrProcess
 						String lineTableName = m_ProfileLines[j].getAD_Table().getTableName();
 						String linkColumn =  m_ProfileLines[j].getAD_Column().getColumnName();
 						String lineTreat = m_ProfileLines[j].getJP_TreatForeignKey();
-						int linValue =  m_ProfileLines[j].getJP_ForeignKey_Value();
-						executeUpdateSQL(lineTableName, linkColumn, lineTreat, linValue
-								, createWhereInIDs(linkColumn, IDs, WHERE_NOT_IN), deleteProfile.getJP_Delete_Client(),"CUSTOM_TABLE_LINE");
+						int lineValue =  m_ProfileLines[j].getJP_ForeignKey_Value();
+						executeUpdateSQL(lineTableName, linkColumn, lineTreat, lineValue
+								, createWhereInIDs(linkColumn, IDs, WHERE_NOT_IN), deleteProfile.getJP_Delete_Client(),"CUSTOM_TABLE_LINE_UPDATE");
 					}//for
 				}
 				JP_CustomDeleteProfileLine_ID = 0;//for logging
@@ -1297,6 +1307,12 @@ public class JPiereDeleteClientRecords extends SvrProcess
 	 */
 	private String deleteOrg(String where) throws Exception
 	{
+		if(Util.isEmpty(where))
+		{
+			createLog("", "", "##### DON'T DELETE ORGANIZATION #####","","","",false);
+			return "";
+		}
+
 		addLog("##### DELETE ORGANIZATION #####");
 		createLog("", "", "##### DELETE ORGANIZATION #####","","","",true);
 
@@ -1432,6 +1448,12 @@ public class JPiereDeleteClientRecords extends SvrProcess
 	 */
 	private String deleteRole(String where) throws Exception
 	{
+		if(Util.isEmpty(where))
+		{
+			createLog("", "", "##### DON'T DELETE ROLE #####","","","",false);
+			return "";
+		}
+
 		addLog("##### DELETE ROLE #####");
 		createLog("", "", "##### DELETE ROLE #####","","","",true);
 
@@ -1470,6 +1492,12 @@ public class JPiereDeleteClientRecords extends SvrProcess
 	 */
 	private String deleteUser(String where)throws Exception
 	{
+		if(Util.isEmpty(where))
+		{
+			createLog("", "", "##### DON'T DELETE USER #####","","","",false);
+			return "";
+		}
+
 		addLog("##### DELETE USER #####");
 		createLog("", "", "##### DELETE USER #####","","","",true);
 
@@ -1516,6 +1544,12 @@ public class JPiereDeleteClientRecords extends SvrProcess
 
 	private String deleteBPartner(String where)throws Exception
 	{
+		if(Util.isEmpty(where))
+		{
+			createLog("", "", "##### DON'T DELETE BUSINESS PARTNER #####","","","",false);
+			return "";
+		}
+
 		addLog("##### DELETE BUSINESS PARTNER #####");
 		createLog("", "", "##### DELETE BUSINESS PARTNER #####","","","",true);
 
@@ -1537,6 +1571,12 @@ public class JPiereDeleteClientRecords extends SvrProcess
 
 	private String deleteProduct(String where)throws Exception
 	{
+		if(Util.isEmpty(where))
+		{
+			createLog("", "", "##### DON'T DELETE PRODUCT #####","","","",false);
+			return "";
+		}
+
 		addLog("##### DELETE PRODUCT #####");
 		createLog("", "", "##### DELETE PRODUCT #####","","","",true);
 
