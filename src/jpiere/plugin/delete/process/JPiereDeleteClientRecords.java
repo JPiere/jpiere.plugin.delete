@@ -382,7 +382,7 @@ public class JPiereDeleteClientRecords extends SvrProcess
 			client.setName(name2);
 			client.saveEx(get_TrxName());
 
-			ArrayList<Integer> AD_Role_IDs = getIDList("AD_Role_ID", "AD_Role", null, TYPE_INITIALIZE_CLIENT);
+			ArrayList<Integer> AD_Role_IDs = getIDList("AD_Role_ID", "AD_Role", "Name LIKE '%" + oldName + "%'", TYPE_INITIALIZE_CLIENT);
 			for(Integer AD_Role_ID : AD_Role_IDs)
 			{
 				MRole role = new MRole(getCtx(), AD_Role_ID.intValue(), get_TrxName());
@@ -393,7 +393,7 @@ public class JPiereDeleteClientRecords extends SvrProcess
 				}
 			}
 
-			ArrayList<Integer> AD_User_IDs = getIDList("AD_User_ID", "AD_User", null, TYPE_INITIALIZE_CLIENT);
+			ArrayList<Integer> AD_User_IDs = getIDList("AD_User_ID", "AD_User", "Name LIKE '%" + oldName + "%'", TYPE_INITIALIZE_CLIENT);
 			for(Integer AD_User_ID : AD_User_IDs)
 			{
 				MUser user = new MUser(getCtx(), AD_User_ID.intValue(), get_TrxName());
@@ -404,7 +404,7 @@ public class JPiereDeleteClientRecords extends SvrProcess
 				}
 			}
 
-			ArrayList<Integer> C_BPartner_IDs = getIDList("C_BPartner_ID", "C_BPartner", null, TYPE_INITIALIZE_CLIENT);
+			ArrayList<Integer> C_BPartner_IDs = getIDList("C_BPartner_ID", "C_BPartner", "Name LIKE '%" + oldName + "%'", TYPE_INITIALIZE_CLIENT);
 			for(Integer C_BPartner_ID : C_BPartner_IDs)
 			{
 				MBPartner bp = new MBPartner(getCtx(), C_BPartner_ID.intValue(), get_TrxName());
