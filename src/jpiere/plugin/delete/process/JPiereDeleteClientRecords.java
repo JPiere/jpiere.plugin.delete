@@ -634,6 +634,10 @@ public class JPiereDeleteClientRecords extends SvrProcess
 		executeResetBankAccount(type);
 		commitEx();
 		
+		//Rest Project InvoicedAmt=0, InvoicedQty=0, ProjectBalanceAmt=0 
+		executeResetProject(type);
+		commitEx();
+		
 		//Reset Table+_ID
 		if(Tables_CustomDelete != null && (p_JP_Delete_Client.equals(TYPE_ALL_TRANSACTION) || p_JP_Delete_Client.equals(TYPE_CLIENT_TRANSACTION)))
 			doResetKeyID(stringArray_Merge(TrxTables, Tables_CustomDelete));
@@ -1873,6 +1877,46 @@ public class JPiereDeleteClientRecords extends SvrProcess
 		return updates;
 		
 	}
+	
+	private int executeResetProject(String type)
+	{
+		StringBuilder updateSQL = new StringBuilder("UPDATE C_Project SET InvoicedAmt=0, InvoicedQty=0, ProjectBalanceAmt=0  ");
+		
+		if(type.equals(TYPE_ALL_TRANSACTION))
+		{
+			;//Nothing to do
+		}else{
+			updateSQL.append("WHERE AD_Client_ID = "+ p_LookupClientID );
+		}
+
+		
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		int updates = 0;
+		try
+		{
+			pstmt = DB.prepareStatement(updateSQL.toString(), get_TrxName());
+			updates = pstmt.executeUpdate();
+			if(updates == 0 && !p_IsAllowLogging)
+			{
+				;//Nothing to do
+			}else{
+				createLog("C_Project", null, "UPDATE : " + updates, updateSQL.toString(), null, "Reset Project", false);
+			}
+		}
+		catch (SQLException e)
+		{
+			log.log(Level.SEVERE, updateSQL.toString(), e);
+			throw new DBException(e, updateSQL.toString());
+		} finally {
+			DB.close(rs, pstmt);
+			rs = null; pstmt = null;
+		}
+
+		return updates;
+		
+	}
+	
 	
 	/**
 	 * Execute Update Constraint
