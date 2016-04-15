@@ -627,15 +627,15 @@ public class JPiereDeleteClientRecords extends SvrProcess
 		}//if(!p_JP_Delete_Client.equals(TYPE_DELETE_CLIENT))
 
 		//Rest BPartner totalopenbalance=0, actuallifetimevalue=0, firstsale=null
-		executeResetBP(type);
+		executeReset("C_BPartner", "totalopenbalance=0, actuallifetimevalue=0, firstsale=null", type);
 		commitEx();
 		
 		//Rest Bank Account currentbalance=0
-		executeResetBankAccount(type);
+		executeReset("C_BankAccount", "Currentbalance=0", type);
 		commitEx();
 		
 		//Rest Project InvoicedAmt=0, InvoicedQty=0, ProjectBalanceAmt=0 
-		executeResetProject(type);
+		executeReset("C_Project", "InvoicedAmt=0, InvoicedQty=0, ProjectBalanceAmt=0", type);
 		commitEx();
 		
 		//Reset Table+_ID
@@ -1800,54 +1800,16 @@ public class JPiereDeleteClientRecords extends SvrProcess
 		return updates;
 	}
 
-	private int executeResetBP(String type)
-	{
-		StringBuilder updateSQL = new StringBuilder("UPDATE C_BPartner SET totalopenbalance=0, actuallifetimevalue=0, firstsale=null ");
-		
-		if(type.equals(TYPE_ALL_TRANSACTION))
-		{
-			;//Nothing to do
-		}else{
-			updateSQL.append("WHERE AD_Client_ID = "+ p_LookupClientID );
-		}
-
-		
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		int updates = 0;
-		try
-		{
-			pstmt = DB.prepareStatement(updateSQL.toString(), get_TrxName());
-			updates = pstmt.executeUpdate();
-			if(updates == 0 && !p_IsAllowLogging)
-			{
-				;//Nothing to do
-			}else{
-				createLog("C_BPartner", null, "UPDATE : " + updates, updateSQL.toString(), null, "Reset BP", false);
-			}
-		}
-		catch (SQLException e)
-		{
-			log.log(Level.SEVERE, updateSQL.toString(), e);
-			throw new DBException(e, updateSQL.toString());
-		} finally {
-			DB.close(rs, pstmt);
-			rs = null; pstmt = null;
-		}
-
-		return updates;
-		
-	}
 	
-	private int executeResetBankAccount(String type)
+	private int executeReset(String TableName, String setClause, String type)
 	{
-		StringBuilder updateSQL = new StringBuilder("UPDATE C_BankAccount SET Currentbalance=0 ");
+		StringBuilder updateSQL = new StringBuilder("UPDATE " + TableName + " SET " + setClause);
 		
 		if(type.equals(TYPE_ALL_TRANSACTION))
 		{
 			;//Nothing to do
 		}else{
-			updateSQL.append("WHERE AD_Client_ID = "+ p_LookupClientID );
+			updateSQL.append(" WHERE AD_Client_ID = "+ p_LookupClientID );
 		}
 
 		
@@ -1862,46 +1824,7 @@ public class JPiereDeleteClientRecords extends SvrProcess
 			{
 				;//Nothing to do
 			}else{
-				createLog("C_BankAccount", null, "UPDATE : " + updates, updateSQL.toString(), null, "Reset Bank Account", false);
-			}
-		}
-		catch (SQLException e)
-		{
-			log.log(Level.SEVERE, updateSQL.toString(), e);
-			throw new DBException(e, updateSQL.toString());
-		} finally {
-			DB.close(rs, pstmt);
-			rs = null; pstmt = null;
-		}
-
-		return updates;
-		
-	}
-	
-	private int executeResetProject(String type)
-	{
-		StringBuilder updateSQL = new StringBuilder("UPDATE C_Project SET InvoicedAmt=0, InvoicedQty=0, ProjectBalanceAmt=0  ");
-		
-		if(type.equals(TYPE_ALL_TRANSACTION))
-		{
-			;//Nothing to do
-		}else{
-			updateSQL.append("WHERE AD_Client_ID = "+ p_LookupClientID );
-		}
-
-		
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		int updates = 0;
-		try
-		{
-			pstmt = DB.prepareStatement(updateSQL.toString(), get_TrxName());
-			updates = pstmt.executeUpdate();
-			if(updates == 0 && !p_IsAllowLogging)
-			{
-				;//Nothing to do
-			}else{
-				createLog("C_Project", null, "UPDATE : " + updates, updateSQL.toString(), null, "Reset Project", false);
+				createLog(TableName, null, "UPDATE : " + updates, updateSQL.toString(), null, "Reset "+TableName, false);
 			}
 		}
 		catch (SQLException e)
