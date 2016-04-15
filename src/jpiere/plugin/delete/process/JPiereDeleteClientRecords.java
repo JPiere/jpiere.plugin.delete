@@ -607,8 +607,7 @@ public class JPiereDeleteClientRecords extends SvrProcess
 				MSequence m_sequence = new MSequence(getCtx(), AD_Sequence_ID.intValue(), null);
 				createLog("AD_Sequence", null, "RESET DOCNO - " + m_sequence.getName() + " : " + Msg.getElement(getCtx(), "CurrentNext") +" ---> " + m_sequence.getStartNo()
 						, updateSequenceSQL, "", "DOCUMENT_NUMBER",false);
-
-			}
+			}//for(Integer AD_Sequence_ID:DocSequenceList)
 
 			commitEx();
 			createLog("", "", "COMMIT", "", "", "",false);
@@ -627,6 +626,10 @@ public class JPiereDeleteClientRecords extends SvrProcess
 
 		}//if(!p_JP_Delete_Client.equals(TYPE_DELETE_CLIENT))
 
+		//totalopenbalance=0, actuallifetimevalue=0, firstsale=null
+		executeResetBP(type);
+		commitEx();
+		
 		//Reset Table+_ID
 		if(Tables_CustomDelete != null && (p_JP_Delete_Client.equals(TYPE_ALL_TRANSACTION) || p_JP_Delete_Client.equals(TYPE_CLIENT_TRANSACTION)))
 			doResetKeyID(stringArray_Merge(TrxTables, Tables_CustomDelete));
@@ -1789,6 +1792,45 @@ public class JPiereDeleteClientRecords extends SvrProcess
 		return updates;
 	}
 
+	private int executeResetBP(String type)
+	{
+		StringBuilder updateSQL = new StringBuilder("UPDATE C_BPartner SET totalopenbalance=0, actuallifetimevalue=0, firstsale=null ");
+		
+		if(type.equals(TYPE_ALL_TRANSACTION))
+		{
+			;//Nothing to do
+		}else{
+			updateSQL.append("WHERE AD_Client_ID = "+ p_LookupClientID );
+		}
+
+		
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		int updates = 0;
+		try
+		{
+			pstmt = DB.prepareStatement(updateSQL.toString(), get_TrxName());
+			updates = pstmt.executeUpdate();
+			if(updates == 0 && !p_IsAllowLogging)
+			{
+				;//Nothing to do
+			}else{
+				createLog("C_BPartner", null, "UPDATE : " + updates, updateSQL.toString(), null, "Reset BP", false);
+			}
+		}
+		catch (SQLException e)
+		{
+			log.log(Level.SEVERE, updateSQL.toString(), e);
+			throw new DBException(e, updateSQL.toString());
+		} finally {
+			DB.close(rs, pstmt);
+			rs = null; pstmt = null;
+		}
+
+		return updates;
+		
+	}
+	
 	/**
 	 * Execute Update Constraint
 	 *
