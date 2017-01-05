@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: jpiere.plugin.delete
 Bundle-SymbolicName: jpiere.plugin.delete;singleton:=true
-Bundle-Version: 3.1.0.qualifier
+Bundle-Version: 4.1.0.qualifier
 Bundle-Vendor: OSS ERP Solutions
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: org.adempiere.base;bundle-version="3.1.0",
