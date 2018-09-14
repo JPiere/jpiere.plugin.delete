@@ -92,6 +92,7 @@ public class JPiereInitializeDefaultAccountOnly extends SvrProcess {
 			deleteC_SubAcct_Tables();
 
 			//Get Default Accont
+			getAcctSchemaElementAccounts();
 			getDefaultGLAccounts();
 			getDefaultAccounts();
 
@@ -127,7 +128,7 @@ public class JPiereInitializeDefaultAccountOnly extends SvrProcess {
 			commitEx();
 		}
 
-		return null;
+		return Msg.getMsg(getCtx(), "Success");
 	}
 
 	/**
@@ -318,6 +319,44 @@ public class JPiereInitializeDefaultAccountOnly extends SvrProcess {
 
 
 		return true;
+	}
+
+	private void getAcctSchemaElementAccounts()
+	{
+		String[] AcctSchemaElement_Accounts =
+			{"C_ElementValue_ID"};
+
+		for(int i = 0; i < AcctSchemaElement_Accounts.length; i++)
+		{
+			String sql = "SELECT ev.C_ElementValue_ID FROM C_AcctSchema_Element ae "
+					+" INNER JOIN adempiere.C_ElementValue ev on (ev.C_ElementValue_ID = ae." + AcctSchemaElement_Accounts[i] + ") "
+					+ " WHERE ae.AD_Client_ID = ? ";
+
+			PreparedStatement pstmt = null;
+			ResultSet rs = null;
+			try
+			{
+				pstmt = DB.prepareStatement(sql, get_TrxName());
+				pstmt.setInt(1, p_LookupClientID);
+				rs = pstmt.executeQuery();
+				while (rs.next())
+				{
+					int account_ID =rs.getInt(1);
+					if(account_ID > 0)
+						defaultAccount_List.add(new Integer (account_ID));
+				}
+			}
+			catch (Exception e)
+			{
+				log.log(Level.SEVERE, sql, e);
+			}
+			finally
+			{
+				DB.close(rs, pstmt);
+				rs = null; pstmt = null;
+			}
+
+		}
 	}
 
 	private void getDefaultGLAccounts()
@@ -585,6 +624,7 @@ public class JPiereInitializeDefaultAccountOnly extends SvrProcess {
 		where.append(")");
 
 		executeDeleteSQL("C_ElementValue", where.toString());
+		executeDeleteSQL("C_ElementValue_Trl", where.toString());
 
 		return true;
 	}
