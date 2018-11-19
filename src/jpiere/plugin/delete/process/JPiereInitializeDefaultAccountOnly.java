@@ -343,7 +343,7 @@ public class JPiereInitializeDefaultAccountOnly extends SvrProcess {
 				{
 					int account_ID =rs.getInt(1);
 					if(account_ID > 0)
-						defaultAccount_List.add(new Integer (account_ID));
+						defaultAccount_List.add(Integer.valueOf(account_ID));
 				}
 			}
 			catch (Exception e)
@@ -391,7 +391,7 @@ public class JPiereInitializeDefaultAccountOnly extends SvrProcess {
 				{
 					int account_ID =rs.getInt(1);
 					if(account_ID > 0)
-						defaultAccount_List.add(new Integer (account_ID));
+						defaultAccount_List.add(Integer.valueOf(account_ID));
 				}
 			}
 			catch (Exception e)
@@ -505,7 +505,7 @@ public class JPiereInitializeDefaultAccountOnly extends SvrProcess {
 				{
 					int account_ID =rs.getInt(1);
 					if(account_ID > 0)
-						defaultAccount_List.add(new Integer (account_ID));
+						defaultAccount_List.add(Integer.valueOf(account_ID));
 				}
 			}
 			catch (Exception e)

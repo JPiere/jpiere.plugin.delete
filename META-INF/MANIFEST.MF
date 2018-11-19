@@ -9,3 +9,4 @@ Require-Bundle: org.adempiere.base;bundle-version="3.1.0",
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/JPiereDeleteProcessFactory.xml,
  OSGI-INF/JPiereDeleteModelFactory.xml
+Automatic-Module-Name: jpiere.plugin.delete
