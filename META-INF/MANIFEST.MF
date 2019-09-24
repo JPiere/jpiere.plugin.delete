@@ -10,3 +10,4 @@ Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/JPiereDeleteProcessFactory.xml,
  OSGI-INF/JPiereDeleteModelFactory.xml
 Automatic-Module-Name: jpiere.plugin.delete
+Bundle-RequiredExecutionEnvironment: JavaSE-11
