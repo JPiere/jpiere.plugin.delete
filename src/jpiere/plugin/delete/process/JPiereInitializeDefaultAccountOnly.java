@@ -571,6 +571,7 @@ public class JPiereInitializeDefaultAccountOnly extends SvrProcess {
 		{
 			pstmt = DB.prepareStatement(deleteSQL.toString(), get_TrxName());
 			deletes = pstmt.executeUpdate();
+			if (log.isLoggable(Level.FINE)) log.fine("Delete AD_TreeNode =#" + deletes + ":" + deleteSQL.toString());
 
 		}
 		catch (SQLException e)
@@ -590,6 +591,7 @@ public class JPiereInitializeDefaultAccountOnly extends SvrProcess {
 		{
 			pstmt = DB.prepareStatement(updateSQL.toString(), get_TrxName());
 			updates = pstmt.executeUpdate();
+			if (log.isLoggable(Level.FINE)) log.fine("Update AD_TreeNode =#" + updates + ":" + updateSQL.toString());
 
 		}
 		catch (SQLException e)
@@ -641,6 +643,7 @@ public class JPiereInitializeDefaultAccountOnly extends SvrProcess {
 		{
 			pstmt = DB.prepareStatement(updateSQL.toString(), get_TrxName());
 			updates = pstmt.executeUpdate();
+			if (log.isLoggable(Level.FINE)) log.fine("Update C_ElementValue =#" + updates + ":" + updateSQL.toString());
 
 		}
 		catch (SQLException e)
@@ -673,6 +676,7 @@ public class JPiereInitializeDefaultAccountOnly extends SvrProcess {
 		{
 			pstmt = DB.prepareStatement(DeleteSQL.toString(), get_TrxName());
 			deletes = pstmt.executeUpdate();
+			if (log.isLoggable(Level.FINE)) log.fine("Delete " + table + " =#" + deletes + " : " + DeleteSQL.toString());
 
 		}
 		catch (SQLException e)
