@@ -22,11 +22,6 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.logging.Level;
 
-import jpiere.plugin.delete.model.MCustomDeleteProfile;
-import jpiere.plugin.delete.model.MCustomDeleteProfileLine;
-import jpiere.plugin.delete.model.MDeleteClientLogJP;
-import jpiere.plugin.delete.model.MDeleteProfile;
-
 import org.adempiere.exceptions.DBException;
 import org.adempiere.util.IProcessUI;
 import org.compiere.db.AdempiereDatabase;
@@ -48,6 +43,11 @@ import org.compiere.util.DisplayType;
 import org.compiere.util.Env;
 import org.compiere.util.Msg;
 import org.compiere.util.Util;
+
+import jpiere.plugin.delete.model.MCustomDeleteProfile;
+import jpiere.plugin.delete.model.MCustomDeleteProfileLine;
+import jpiere.plugin.delete.model.MDeleteClientLogJP;
+import jpiere.plugin.delete.model.MDeleteProfile;
 
 /**
  * 	Process of Initialize Client and Delete Client.
@@ -629,15 +629,15 @@ public class JPiereDeleteClientRecords extends SvrProcess
 		//Rest BPartner totalopenbalance=0, actuallifetimevalue=0, firstsale=null
 		executeReset("C_BPartner", "totalopenbalance=0, actuallifetimevalue=0, firstsale=null", type);
 		commitEx();
-		
+
 		//Rest Bank Account currentbalance=0
 		executeReset("C_BankAccount", "Currentbalance=0", type);
 		commitEx();
-		
-		//Rest Project InvoicedAmt=0, InvoicedQty=0, ProjectBalanceAmt=0 
+
+		//Rest Project InvoicedAmt=0, InvoicedQty=0, ProjectBalanceAmt=0
 		executeReset("C_Project", "InvoicedAmt=0, InvoicedQty=0, ProjectBalanceAmt=0", type);
 		commitEx();
-		
+
 		//Reset Table+_ID
 		if(Tables_CustomDelete != null && (p_JP_Delete_Client.equals(TYPE_ALL_TRANSACTION) || p_JP_Delete_Client.equals(TYPE_CLIENT_TRANSACTION)))
 			doResetKeyID(stringArray_Merge(TrxTables, Tables_CustomDelete));
@@ -1800,11 +1800,11 @@ public class JPiereDeleteClientRecords extends SvrProcess
 		return updates;
 	}
 
-	
+
 	private int executeReset(String TableName, String setClause, String type)
 	{
 		StringBuilder updateSQL = new StringBuilder("UPDATE " + TableName + " SET " + setClause);
-		
+
 		if(type.equals(TYPE_ALL_TRANSACTION))
 		{
 			;//Nothing to do
@@ -1812,7 +1812,7 @@ public class JPiereDeleteClientRecords extends SvrProcess
 			updateSQL.append(" WHERE AD_Client_ID = "+ p_LookupClientID );
 		}
 
-		
+
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		int updates = 0;
@@ -1837,10 +1837,10 @@ public class JPiereDeleteClientRecords extends SvrProcess
 		}
 
 		return updates;
-		
+
 	}
-	
-	
+
+
 	/**
 	 * Execute Update Constraint
 	 *
@@ -1902,6 +1902,7 @@ public class JPiereDeleteClientRecords extends SvrProcess
 	 * @param lockMode
 	 * @return
 	 */
+	@SuppressWarnings("unused")
 	private int executeLockTable(String table, String lockMode)
 	{
 		//Checking if the "tableName" and "Column_ID" exists

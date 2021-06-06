@@ -207,7 +207,7 @@ public class JPiereInitializeDefaultAccountOnly extends SvrProcess {
 
 			}
 
-			boolean success = ProcessUtil.startJavaProcess(getCtx(), pi, Trx.get(get_TrxName(), true), false, processUI);
+			ProcessUtil.startJavaProcess(getCtx(), pi, Trx.get(get_TrxName(), true), false, processUI);
 		}
 
 		return true;
@@ -241,7 +241,7 @@ public class JPiereInitializeDefaultAccountOnly extends SvrProcess {
 
 				}
 
-				boolean success = ProcessUtil.startJavaProcess(getCtx(), pi, Trx.get(get_TrxName(), true), false, processUI);
+				ProcessUtil.startJavaProcess(getCtx(), pi, Trx.get(get_TrxName(), true), false, processUI);
 			}
 		}
 
@@ -276,7 +276,7 @@ public class JPiereInitializeDefaultAccountOnly extends SvrProcess {
 
 				}
 
-				boolean success = ProcessUtil.startJavaProcess(getCtx(), pi, Trx.get(get_TrxName(), true), false, processUI);
+				ProcessUtil.startJavaProcess(getCtx(), pi, Trx.get(get_TrxName(), true), false, processUI);
 			}
 		}
 
