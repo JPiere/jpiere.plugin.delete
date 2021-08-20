@@ -377,7 +377,7 @@ public class JPiereDeleteClientRecords extends SvrProcess
 		{
 			addLog("##### RENEAME CLIENT #####");
 			createLog("", "", "##### RENEAME CLIENT #####", "", "", "",false);
-			MClient client = MClient.get(getCtx(), p_LookupClientID);
+			MClient client = new MClient(getCtx(), p_LookupClientID, get_TrxName());
 			String oldName = client.getName();
 			client.setName(name2);
 			client.saveEx(get_TrxName());
