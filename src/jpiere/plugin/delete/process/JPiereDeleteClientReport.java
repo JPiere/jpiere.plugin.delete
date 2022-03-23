@@ -19,12 +19,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 
-import jpiere.plugin.delete.model.MCustomDeleteProfile;
-import jpiere.plugin.delete.model.MCustomDeleteProfileLine;
-import jpiere.plugin.delete.model.MDeleteClientLogJP;
-import jpiere.plugin.delete.model.MDeleteProfile;
-import jpiere.plugin.delete.process.JPiereDeleteClientRecords.TableColumn;
-
 import org.adempiere.exceptions.DBException;
 import org.compiere.model.MColumn;
 import org.compiere.model.MRefList;
@@ -34,6 +28,12 @@ import org.compiere.process.SvrProcess;
 import org.compiere.util.DB;
 import org.compiere.util.Msg;
 import org.compiere.util.Util;
+
+import jpiere.plugin.delete.model.MCustomDeleteProfile;
+import jpiere.plugin.delete.model.MCustomDeleteProfileLine;
+import jpiere.plugin.delete.model.MDeleteClientLogJP;
+import jpiere.plugin.delete.model.MDeleteProfile;
+import jpiere.plugin.delete.process.JPiereDeleteClientRecords.TableColumn;
 
 /**
  * 	Report of Initialize Client and Delete Client.
@@ -231,6 +231,7 @@ public class JPiereDeleteClientReport extends SvrProcess
 			log.setTableName(m_Table.getTableName());
 			log.setAccessLevel(m_Table.getAccessLevel());
 			log.setAD_Window_ID(m_Table.getAD_Window_ID());
+			log.setIsAllowLogging(p_IsAllowLogging);
 			if(deleteClientRecordsProcess.hasColumn(tables[i]+"_ID", tables[i]))
 				log.setColumnName(tables[i]+"_ID");
 
@@ -297,6 +298,7 @@ public class JPiereDeleteClientReport extends SvrProcess
 				log.setTableName(m_Table.getTableName());
 				log.setAccessLevel(m_Table.getAccessLevel());
 				log.setAD_Window_ID(m_Table.getAD_Window_ID());
+				log.setIsAllowLogging(p_IsAllowLogging);
 				if(deleteClientRecordsProcess.hasColumn(m_Table.getTableName()+"_ID", m_Table.getTableName()))
 					log.setColumnName(m_Table.getTableName()+"_ID");
 
@@ -411,6 +413,7 @@ public class JPiereDeleteClientReport extends SvrProcess
 					log.setColumnSQL(col.getColumnSQL());
 				}
 
+				log.setIsAllowLogging(p_IsAllowLogging);
 				log.saveEx();
 
 			}//while
@@ -505,7 +508,8 @@ public class JPiereDeleteClientReport extends SvrProcess
 					log.setMandatoryLogic(col.getMandatoryLogic());
 					log.setColumnSQL(col.getColumnSQL());
 				}
-
+				
+				log.setIsAllowLogging(p_IsAllowLogging);
 				log.saveEx();
 			}
 		}//if(list_of_reference.size()!=0)
