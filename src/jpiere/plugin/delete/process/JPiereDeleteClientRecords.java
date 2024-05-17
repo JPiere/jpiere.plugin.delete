@@ -33,6 +33,7 @@ import org.compiere.model.MColumn;
 import org.compiere.model.MCostType;
 import org.compiere.model.MRole;
 import org.compiere.model.MSequence;
+import org.compiere.model.MSysConfig;
 import org.compiere.model.MTable;
 import org.compiere.model.MUser;
 import org.compiere.model.Query;
@@ -1849,6 +1850,11 @@ public class JPiereDeleteClientRecords extends SvrProcess
 	 */
 	private int executeUpdateConstraint(String s)
 	{
+		
+		boolean isJP_EXECUTE_UPDATE_CONSTRAINT = MSysConfig.getBooleanValue("JP_EXECUTE_UPDATE_CONSTRAINT", true);
+		if(!isJP_EXECUTE_UPDATE_CONSTRAINT)
+			return 0;
+		
 		if(s.equals("D"))
 		{
 			addLog("### INVALID FK CONSTRAINT ###");
