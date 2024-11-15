@@ -28,6 +28,8 @@ import org.compiere.util.Util;
  */
 public class MDeleteProfile extends X_JP_DeleteProfile {
 
+	private static final long serialVersionUID = 2402834363374900854L;
+	
 	protected MCustomDeleteProfile[] 	m_CustomDeleteProfiles = null;
 
 	public MDeleteProfile(Properties ctx, int JP_DeleteProfile_ID,String trxName)

@@ -24,6 +24,8 @@ import java.util.Properties;
  */
 public class MDeleteClientLogJP extends X_T_DeleteClientLogJP {
 
+	private static final long serialVersionUID = 2218643282474630936L;
+
 	public MDeleteClientLogJP(Properties ctx, int T_DeleteClientLogJP_ID, String trxName) {
 		super(ctx, T_DeleteClientLogJP_ID, trxName);
 	}

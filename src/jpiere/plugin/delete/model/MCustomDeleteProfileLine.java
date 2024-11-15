@@ -29,6 +29,8 @@ import org.compiere.util.Msg;
  */
 public class MCustomDeleteProfileLine extends X_JP_CustomDeleteProfileLine {
 
+	private static final long serialVersionUID = 2540907339534081600L;
+	
 	private MCustomDeleteProfile m_Parent;
 
 	public MCustomDeleteProfileLine(Properties ctx, int JP_CustomDeleteProfileLine_ID, String trxName) {

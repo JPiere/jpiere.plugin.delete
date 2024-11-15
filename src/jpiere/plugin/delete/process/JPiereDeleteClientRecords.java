@@ -934,7 +934,7 @@ public class JPiereDeleteClientRecords extends SvrProcess
 						seq.setCurrentNext(seq.getStartNo());
 						seq.saveEx(get_TrxName());
 					}else if(maxID < 1000000){
-						;//Noting to do;
+						;//Nothing to do;
 					}else{
 						seq.setCurrentNext(maxID + seq.getIncrementNo());
 						seq.saveEx(get_TrxName());
@@ -1656,7 +1656,7 @@ public class JPiereDeleteClientRecords extends SvrProcess
 		}else{
 			if(type.equals(TYPE_ALL_TRANSACTION))
 			{
-				;//Noting to do;
+				;//Nothing to do;
 			}else{
 				DeleteSQL.append(" WHERE AD_Client_ID = " + p_LookupClientID);
 			}
@@ -1671,7 +1671,7 @@ public class JPiereDeleteClientRecords extends SvrProcess
 			deletes = pstmt.executeUpdate();
 			if(deletes == 0 && !p_IsAllowLogging)
 			{
-				;//Noting to do;
+				;//Nothing to do;
 			}else{
 				createLog(table, null, "DELETE : " + deletes, DeleteSQL.toString(), null, help,false);
 			}
@@ -1761,14 +1761,14 @@ public class JPiereDeleteClientRecords extends SvrProcess
 			updateSQL.append(" WHERE " + where);
 			if(type.equals(TYPE_ALL_TRANSACTION))
 			{
-				;//Noting to do;
+				;//Nothing to do;
 			}else{
 				updateSQL.append(" AND AD_Client_ID = " + p_LookupClientID );
 			}
 		}else{
 			if(type.equals(TYPE_ALL_TRANSACTION))
 			{
-				;//Noting to do;
+				;//Nothing to do;
 			}else{
 				updateSQL.append(" WHERE AD_Client_ID = " + p_LookupClientID);
 			}
@@ -1964,14 +1964,14 @@ public class JPiereDeleteClientRecords extends SvrProcess
 			countSQL.append(" WHERE " + where);
 			if(type.equals(TYPE_ALL_TRANSACTION))
 			{
-				;//Noting to do;
+				;//Nothing to do;
 			}else{
 				countSQL.append(" AND AD_Client_ID = " + p_LookupClientID );
 			}
 		}else{
 			if(type.equals(TYPE_ALL_TRANSACTION))
 			{
-				;//Noting to do;
+				;//Nothing to do;
 			}else{
 				countSQL.append(" WHERE AD_Client_ID = " + p_LookupClientID);
 			}
@@ -2022,14 +2022,14 @@ public class JPiereDeleteClientRecords extends SvrProcess
 			distinctSQL.append(" WHERE " + where);
 			if(type.equals(TYPE_ALL_TRANSACTION))
 			{
-				;//Noting to do
+				;//Nothing to do
 			}else{
 				distinctSQL.append(" AND AD_Client_ID = " + p_LookupClientID );
 			}
 		}else{
 			if(type.equals(TYPE_ALL_TRANSACTION))
 			{
-				;//Noting to do
+				;//Nothing to do
 			}else{
 				distinctSQL.append(" WHERE AD_Client_ID = " + p_LookupClientID);
 			}
