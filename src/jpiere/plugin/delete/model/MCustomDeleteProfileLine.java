@@ -49,11 +49,22 @@ public class MCustomDeleteProfileLine extends X_JP_CustomDeleteProfileLine {
 			MTable table = MTable.get(getCtx(), getAD_Table_ID());
 			if(table.getAccessLevel().equals(String.valueOf(MTable.ACCESSLEVEL_SYSTEM)))
 			{
-				//Tables of System Only can not Delete
-				log.saveError("Error", Msg.getMsg(getCtx(), "JP_Delete_SystemTable"));
-				return false;
+				if(MDeleteProfile.JP_DELETE_CLIENT_CustomDelete.equals(getParent().getParent().getJP_Delete_Client()))
+				{
+					if(table.columnExistsInDictionary("EntityType"))
+					{
+						//Tables of Application dictionary can not delete.
+						log.saveError("Error", Msg.getMsg(getCtx(), "JP_Delete_ADTable"));
+						return false;
+					}
+					
+				}else{
+					
+					//Tables of System Only can not Delete
+					log.saveError("Error", Msg.getMsg(getCtx(), "JP_Delete_SystemTable"));
+					return false;
+				}
 			}
-
 
 			if(!DisplayType.isID(getAD_Column().getAD_Reference_ID()))
 			{

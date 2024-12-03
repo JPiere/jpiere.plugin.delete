@@ -160,8 +160,7 @@ public class JPiereDeleteClientRecords extends SvrProcess
 		//System Client do not delete.
 		if(p_JP_Delete_Client.equals(TYPE_CLIENT_TRANSACTION)
 				|| p_JP_Delete_Client.equals(TYPE_DELETE_CLIENT)
-				|| p_JP_Delete_Client.equals(TYPE_INITIALIZE_CLIENT)
-				|| p_JP_Delete_Client.equals(TYPE_CUSTOM_DELETE))
+				|| p_JP_Delete_Client.equals(TYPE_INITIALIZE_CLIENT))
 		{
 			if(p_LookupClientID==0)
 			{
@@ -171,6 +170,7 @@ public class JPiereDeleteClientRecords extends SvrProcess
 				createLog("","",msg, "","","", false);
 				return msg;//"Could not delete record: System Client"
 			}
+			
 		}else if(p_JP_Delete_Client.equals(TYPE_ALL_TRANSACTION)){
 			if(p_LookupClientID != 0)
 			{
@@ -830,31 +830,38 @@ public class JPiereDeleteClientRecords extends SvrProcess
 
 		MCustomDeleteProfile[] customDeleteProfiles = deleteProfile.getCustomDeleteProfiles();
 		int returnInt = 0;
+		MTable m_Table = null;
 		for(int i = 0; i < customDeleteProfiles.length; i++)
 		{
 			JP_CustomDeleteProfile_ID =customDeleteProfiles[i].get_ID();//for logging
+			m_Table = MTable.get(getCtx(), customDeleteProfiles[i].getAD_Table_ID());
+			if(m_Table.columnExistsInDictionary("EntityType"))
+			{
+				createLog("","","##### DON'T DELETE " + m_Table.getTableName() + " #####", "","",Msg.getMsg(getCtx(), "JP_Delete_ADTable"), false);
+				continue;
+			}
+			
 			if(customDeleteProfiles[i].isDeleteDataNotUseJP())
 			{
-
-				createLog("","","##### DELETE " + customDeleteProfiles[i].getAD_Table().getTableName() + " RECORDS THAT ARE NOTE USED #####", "","","", true);
-				returnInt = bulkDelete_NotUseRecords(customDeleteProfiles[i].getAD_Table().getTableName(), deleteProfile.getJP_Delete_Client());
-				bulkUpdate_Log(returnInt, customDeleteProfiles[i].getAD_Table().getTableName(), DEBUG_BULK_UPDATE_LOG);
+				createLog("","","##### DELETE " + m_Table.getTableName() + " RECORDS THAT ARE NOTE USED #####", "","","", true);
+				returnInt = bulkDelete_NotUseRecords(m_Table.getTableName(), deleteProfile.getJP_Delete_Client());
+				bulkUpdate_Log(returnInt, m_Table.getTableName(), DEBUG_BULK_UPDATE_LOG);
 
 			}else{
 
 				if(deleteProfile.getJP_Delete_Client().equals(TYPE_ALL_TRANSACTION) && p_IsTruncateJP) //TRUNCATE
 				{
-					String tableName = customDeleteProfiles[i].getAD_Table().getTableName();
+					String tableName = m_Table.getTableName();
 					executeDeleteSQL(tableName, null, TYPE_ALL_TRANSACTION, true,"CUSTOM_TABLE_TRUNCATE");
 
 				}else{
 
 					if(Util.isEmpty(customDeleteProfiles[i].getWhereClause()))
 					{
-						createLog("","","##### DON'T DELETE " + customDeleteProfiles[i].getAD_Table().getTableName() + " #####", "","","", false);
+						createLog("","","##### DON'T DELETE " + m_Table.getTableName() + " #####", "","","", false);
 						continue;
 					}else{
-						createLog("","","##### DELETE " + customDeleteProfiles[i].getAD_Table().getTableName() + " #####", "","","", true);
+						createLog("","","##### DELETE " + m_Table.getTableName() + " #####", "","","", true);
 					}
 
 					MCustomDeleteProfileLine[] m_ProfileLines = customDeleteProfiles[i].getCustomDeleteProfileLines();
@@ -864,7 +871,7 @@ public class JPiereDeleteClientRecords extends SvrProcess
 						list_of_excludeTables.add(m_ProfileLines[j].getAD_Table().getTableName());
 					}
 					String[] excludeTables=list_of_excludeTables.toArray(new String[list_of_excludeTables.size()]);
-					String tableName = customDeleteProfiles[i].getAD_Table().getTableName();
+					String tableName = m_Table.getTableName();
 					ArrayList<Integer> IDs = getIDList(tableName+"_ID", tableName, customDeleteProfiles[i].getWhereClause(), deleteProfile.getJP_Delete_Client());
 					String treat = customDeleteProfiles[i].getJP_TreatForeignKey();
 					int value = customDeleteProfiles[i].getJP_ForeignKey_Value();
