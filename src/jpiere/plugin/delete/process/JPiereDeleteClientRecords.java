@@ -320,8 +320,12 @@ public class JPiereDeleteClientRecords extends SvrProcess
 		executeDeleteSQL("AD_ChangeLog", "AD_Client_ID <> 0", TYPE_ALL_TRANSACTION, false, "BEFORE_PROCESS");
 		executeDeleteSQL("AD_ChangeLog", "AD_Client_ID = 0 AND AD_Session_ID IN (SELECT DISTINCT(AD_Session_ID) FROM AD_Session WHERE AD_Client_ID <> 0 )"
 																										, TYPE_ALL_TRANSACTION, false, "BEFORE_PROCESS");
+		
+		executeDeleteSQL("AD_PInstance_Log", "AD_Client_ID <> 0", TYPE_ALL_TRANSACTION, false, "BEFORE_PROCESS");
+		executeDeleteSQL("AD_PInstance_Para", "AD_Client_ID <> 0", TYPE_ALL_TRANSACTION, false, "BEFORE_PROCESS");
+		executeDeleteSQL("AD_PInstance", "AD_Client_ID <> 0", TYPE_ALL_TRANSACTION, false, "BEFORE_PROCESS");
 		commitEx();
-
+		
 		executeDeleteSQL("AD_Session", "AD_Client_ID <> 0", TYPE_ALL_TRANSACTION, false, "BEFORE_PROCESS");
 		commitEx();
 		createLog("", "", "COMMIT", "", "", "",false);
@@ -2128,7 +2132,7 @@ public class JPiereDeleteClientRecords extends SvrProcess
 		int processed = 0;
 
 		String getTableSQL = "SELECT UPPER(TableName) FROM AD_Table t INNER JOIN AD_Column c ON(t.AD_Table_ID = C.AD_Table_ID)"
-				+ " WHERE IsView='N' and UPPER(ColumnName)=?";
+				+ " WHERE IsView='N' and UPPER(ColumnName)=? AND c.ColumnSQL IS NULL";
 
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -2291,7 +2295,7 @@ public class JPiereDeleteClientRecords extends SvrProcess
 		TreeSet<Integer> set_of_ID = new TreeSet<Integer>();
 
 		String getTableSQL = "SELECT UPPER(TableName) FROM AD_Table t INNER JOIN AD_Column c ON(t.AD_Table_ID = C.AD_Table_ID)"
-				+ " WHERE IsView='N' and UPPER(ColumnName)=?";
+				+ " WHERE IsView='N' and UPPER(ColumnName)=? AND c.ColumnSQL IS NULL";
 
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
