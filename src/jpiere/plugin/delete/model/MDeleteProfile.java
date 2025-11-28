@@ -32,11 +32,16 @@ public class MDeleteProfile extends X_JP_DeleteProfile {
 	
 	protected MCustomDeleteProfile[] 	m_CustomDeleteProfiles = null;
 
-	public MDeleteProfile(Properties ctx, int JP_DeleteProfile_ID,String trxName)
+	public MDeleteProfile(Properties ctx, int JP_DeleteProfile_ID, String trxName)
 	{
 		super(ctx, JP_DeleteProfile_ID, trxName);
 	}
 
+	public MDeleteProfile(Properties ctx, String JP_DeleteProfile_UU, String trxName)
+	{
+		super(ctx, JP_DeleteProfile_UU, trxName);
+	}
+	
 	public MDeleteProfile(Properties ctx, ResultSet rs, String trxName)
 	{
 		super(ctx, rs, trxName);

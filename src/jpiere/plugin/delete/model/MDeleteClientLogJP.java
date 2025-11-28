@@ -30,6 +30,10 @@ public class MDeleteClientLogJP extends X_T_DeleteClientLogJP {
 		super(ctx, T_DeleteClientLogJP_ID, trxName);
 	}
 
+	public MDeleteClientLogJP(Properties ctx, String T_DeleteClientLogJP_UU, String trxName) {
+		super(ctx, T_DeleteClientLogJP_UU, trxName);
+	}
+	
 	public MDeleteClientLogJP(Properties ctx, ResultSet rs, String trxName) {
 		super(ctx, rs, trxName);
 	}

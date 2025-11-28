@@ -31,10 +31,14 @@ public class MCustomDeleteProfile extends X_JP_CustomDeleteProfile {
 
 	private MCustomDeleteProfileLine[] 	m_lines = null;
 
-	public MCustomDeleteProfile(Properties ctx, int JP_CustomDeleteProfile_ID,String trxName) {
+	public MCustomDeleteProfile(Properties ctx, int JP_CustomDeleteProfile_ID, String trxName) {
 		super(ctx, JP_CustomDeleteProfile_ID, trxName);
 	}
 
+	public MCustomDeleteProfile(Properties ctx, String JP_CustomDeleteProfile_UU, String trxName) {
+		super(ctx, JP_CustomDeleteProfile_UU, trxName);
+	}
+	
 	public MCustomDeleteProfile(Properties ctx, ResultSet rs, String trxName) {
 		super(ctx, rs, trxName);
 	}

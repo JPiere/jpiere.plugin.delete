@@ -23,7 +23,7 @@ import org.compiere.util.KeyNamePair;
 
 /** Generated Interface for T_DeleteClientLogJP
  *  @author iDempiere (generated) 
- *  @version Release 3.1
+ *  @version Release 12
  */
 @SuppressWarnings("all")
 public interface I_T_DeleteClientLogJP 
@@ -46,8 +46,8 @@ public interface I_T_DeleteClientLogJP
     /** Column name AD_Client_ID */
     public static final String COLUMNNAME_AD_Client_ID = "AD_Client_ID";
 
-	/** Get Client.
-	  * Client/Tenant for this installation.
+	/** Get Tenant.
+	  * Tenant for this installation.
 	  */
 	public int getAD_Client_ID();
 
@@ -70,12 +70,12 @@ public interface I_T_DeleteClientLogJP
     public static final String COLUMNNAME_AD_Org_ID = "AD_Org_ID";
 
 	/** Set Organization.
-	  * Organizational entity within client
+	  * Organizational entity within tenant
 	  */
 	public void setAD_Org_ID (int AD_Org_ID);
 
 	/** Get Organization.
-	  * Organizational entity within client
+	  * Organizational entity within tenant
 	  */
 	public int getAD_Org_ID();
 
@@ -397,10 +397,10 @@ public interface I_T_DeleteClientLogJP
     /** Column name JP_Delete_Client */
     public static final String COLUMNNAME_JP_Delete_Client = "JP_Delete_Client";
 
-	/** Set Delete or Initialize Client	  */
+	/** Set Delete or Initialize Tenant	  */
 	public void setJP_Delete_Client (String JP_Delete_Client);
 
-	/** Get Delete or Initialize Client	  */
+	/** Get Delete or Initialize Tenant	  */
 	public String getJP_Delete_Client();
 
     /** Column name JP_TreatForeignKey */
@@ -415,13 +415,13 @@ public interface I_T_DeleteClientLogJP
     /** Column name LookupClientID */
     public static final String COLUMNNAME_LookupClientID = "LookupClientID";
 
-	/** Set Lookup Client ID.
-	  * The ClientID or Login submitted to the Lookup URL
+	/** Set Lookup Tenant ID.
+	  * The Client ID or Login submitted to the Lookup URL
 	  */
 	public void setLookupClientID (int LookupClientID);
 
-	/** Get Lookup Client ID.
-	  * The ClientID or Login submitted to the Lookup URL
+	/** Get Lookup Tenant ID.
+	  * The Client ID or Login submitted to the Lookup URL
 	  */
 	public int getLookupClientID();
 
@@ -448,19 +448,19 @@ public interface I_T_DeleteClientLogJP
     /** Column name SQLStatement */
     public static final String COLUMNNAME_SQLStatement = "SQLStatement";
 
-	/** Set SQLStatement	  */
+	/** Set SQL Expression/Statement	  */
 	public void setSQLStatement (String SQLStatement);
 
-	/** Get SQLStatement	  */
+	/** Get SQL Expression/Statement	  */
 	public String getSQLStatement();
 
     /** Column name T_DeleteClientLogJP_ID */
     public static final String COLUMNNAME_T_DeleteClientLogJP_ID = "T_DeleteClientLogJP_ID";
 
-	/** Set Delete Client Log Temporary Table	  */
+	/** Set Delete Log ID	  */
 	public void setT_DeleteClientLogJP_ID (int T_DeleteClientLogJP_ID);
 
-	/** Get Delete Client Log Temporary Table	  */
+	/** Get Delete Log ID	  */
 	public int getT_DeleteClientLogJP_ID();
 
     /** Column name T_DeleteClientLogJP_UU */

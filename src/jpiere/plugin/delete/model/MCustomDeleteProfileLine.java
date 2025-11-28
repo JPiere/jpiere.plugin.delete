@@ -36,6 +36,10 @@ public class MCustomDeleteProfileLine extends X_JP_CustomDeleteProfileLine {
 	public MCustomDeleteProfileLine(Properties ctx, int JP_CustomDeleteProfileLine_ID, String trxName) {
 		super(ctx, JP_CustomDeleteProfileLine_ID, trxName);
 	}
+	
+	public MCustomDeleteProfileLine(Properties ctx, String JP_CustomDeleteProfileLine_UU, String trxName) {
+		super(ctx, JP_CustomDeleteProfileLine_UU, trxName);
+	}
 
 	public MCustomDeleteProfileLine(Properties ctx, ResultSet rs, String trxName) {
 		super(ctx, rs, trxName);

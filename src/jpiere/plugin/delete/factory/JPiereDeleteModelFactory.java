@@ -71,6 +71,26 @@ public class JPiereDeleteModelFactory implements IModelFactory {
 		}
 		return null;
 	}
+	
+	
+	@Override
+	public PO getPO(String tableName, String Record_UU, String trxName)
+	{
+
+		if(tableName.startsWith("JP"))
+		{
+			if(tableName.equals(MDeleteProfile.Table_Name)){
+				return  new MDeleteProfile(Env.getCtx(), Record_UU, trxName);
+			}else if(tableName.equals(MCustomDeleteProfile.Table_Name)){
+				return new MCustomDeleteProfile(Env.getCtx(), Record_UU, trxName);
+			}else if(tableName.equals(MCustomDeleteProfileLine.Table_Name)){
+				return new MCustomDeleteProfileLine(Env.getCtx(), Record_UU, trxName);
+			}else if(tableName.equals(MDeleteClientLogJP.Table_Name)){
+				return new MDeleteClientLogJP(Env.getCtx(), Record_UU, trxName);
+			}
+		}
+		return null;
+	}
 
 	@Override
 	public PO getPO(String tableName, ResultSet rs, String trxName)

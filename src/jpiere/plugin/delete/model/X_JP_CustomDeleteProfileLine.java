@@ -20,23 +20,76 @@ package jpiere.plugin.delete.model;
 import java.sql.ResultSet;
 import java.util.Properties;
 import org.compiere.model.*;
+import org.compiere.util.KeyNamePair;
 
 /** Generated Model for JP_CustomDeleteProfileLine
- *  @author iDempiere (generated) 
- *  @version Release 3.1 - $Id$ */
-public class X_JP_CustomDeleteProfileLine extends PO implements I_JP_CustomDeleteProfileLine, I_Persistent 
+ *  @author iDempiere (generated)
+ *  @version Release 12 - $Id$ */
+@org.adempiere.base.Model(table="JP_CustomDeleteProfileLine")
+public class X_JP_CustomDeleteProfileLine extends PO implements I_JP_CustomDeleteProfileLine, I_Persistent
 {
 
 	/**
 	 *
 	 */
-	private static final long serialVersionUID = 20160214L;
+	private static final long serialVersionUID = 20251128L;
 
     /** Standard Constructor */
     public X_JP_CustomDeleteProfileLine (Properties ctx, int JP_CustomDeleteProfileLine_ID, String trxName)
     {
       super (ctx, JP_CustomDeleteProfileLine_ID, trxName);
       /** if (JP_CustomDeleteProfileLine_ID == 0)
+        {
+			setAD_Column_ID (0);
+			setAD_Table_ID (0);
+			setJP_CustomDeleteProfileLine_ID (0);
+			setJP_CustomDeleteProfile_ID (0);
+			setJP_TreatForeignKey (null);
+// TSN
+			setSeqNo (0);
+// @SQL=SELECT COALESCE(MAX(SeqNo),0)+10 AS DefaultValue FROM JP_CustomDeleteProfileLine WHERE JP_CustomDeleteProfile_ID=@JP_CustomDeleteProfile_ID@
+        } */
+    }
+
+    /** Standard Constructor */
+    public X_JP_CustomDeleteProfileLine (Properties ctx, int JP_CustomDeleteProfileLine_ID, String trxName, String ... virtualColumns)
+    {
+      super (ctx, JP_CustomDeleteProfileLine_ID, trxName, virtualColumns);
+      /** if (JP_CustomDeleteProfileLine_ID == 0)
+        {
+			setAD_Column_ID (0);
+			setAD_Table_ID (0);
+			setJP_CustomDeleteProfileLine_ID (0);
+			setJP_CustomDeleteProfile_ID (0);
+			setJP_TreatForeignKey (null);
+// TSN
+			setSeqNo (0);
+// @SQL=SELECT COALESCE(MAX(SeqNo),0)+10 AS DefaultValue FROM JP_CustomDeleteProfileLine WHERE JP_CustomDeleteProfile_ID=@JP_CustomDeleteProfile_ID@
+        } */
+    }
+
+    /** Standard Constructor */
+    public X_JP_CustomDeleteProfileLine (Properties ctx, String JP_CustomDeleteProfileLine_UU, String trxName)
+    {
+      super (ctx, JP_CustomDeleteProfileLine_UU, trxName);
+      /** if (JP_CustomDeleteProfileLine_UU == null)
+        {
+			setAD_Column_ID (0);
+			setAD_Table_ID (0);
+			setJP_CustomDeleteProfileLine_ID (0);
+			setJP_CustomDeleteProfile_ID (0);
+			setJP_TreatForeignKey (null);
+// TSN
+			setSeqNo (0);
+// @SQL=SELECT COALESCE(MAX(SeqNo),0)+10 AS DefaultValue FROM JP_CustomDeleteProfileLine WHERE JP_CustomDeleteProfile_ID=@JP_CustomDeleteProfile_ID@
+        } */
+    }
+
+    /** Standard Constructor */
+    public X_JP_CustomDeleteProfileLine (Properties ctx, String JP_CustomDeleteProfileLine_UU, String trxName, String ... virtualColumns)
+    {
+      super (ctx, JP_CustomDeleteProfileLine_UU, trxName, virtualColumns);
+      /** if (JP_CustomDeleteProfileLine_UU == null)
         {
 			setAD_Column_ID (0);
 			setAD_Table_ID (0);
@@ -56,7 +109,7 @@ public class X_JP_CustomDeleteProfileLine extends PO implements I_JP_CustomDelet
     }
 
     /** AccessLevel
-      * @return 4 - System 
+      * @return 4 - System
       */
     protected int get_AccessLevel()
     {
@@ -72,32 +125,32 @@ public class X_JP_CustomDeleteProfileLine extends PO implements I_JP_CustomDelet
 
     public String toString()
     {
-      StringBuffer sb = new StringBuffer ("X_JP_CustomDeleteProfileLine[")
+      StringBuilder sb = new StringBuilder ("X_JP_CustomDeleteProfileLine[")
         .append(get_ID()).append("]");
       return sb.toString();
     }
 
 	public org.compiere.model.I_AD_Column getAD_Column() throws RuntimeException
-    {
-		return (org.compiere.model.I_AD_Column)MTable.get(getCtx(), org.compiere.model.I_AD_Column.Table_Name)
-			.getPO(getAD_Column_ID(), get_TrxName());	}
+	{
+		return (org.compiere.model.I_AD_Column)MTable.get(getCtx(), org.compiere.model.I_AD_Column.Table_ID)
+			.getPO(getAD_Column_ID(), get_TrxName());
+	}
 
 	/** Set Column.
-		@param AD_Column_ID 
-		Column in the table
-	  */
+		@param AD_Column_ID Column in the table
+	*/
 	public void setAD_Column_ID (int AD_Column_ID)
 	{
-		if (AD_Column_ID < 1) 
+		if (AD_Column_ID < 1)
 			set_Value (COLUMNNAME_AD_Column_ID, null);
-		else 
+		else
 			set_Value (COLUMNNAME_AD_Column_ID, Integer.valueOf(AD_Column_ID));
 	}
 
 	/** Get Column.
 		@return Column in the table
 	  */
-	public int getAD_Column_ID () 
+	public int getAD_Column_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_AD_Column_ID);
 		if (ii == null)
@@ -106,26 +159,26 @@ public class X_JP_CustomDeleteProfileLine extends PO implements I_JP_CustomDelet
 	}
 
 	public org.compiere.model.I_AD_Table getAD_Table() throws RuntimeException
-    {
-		return (org.compiere.model.I_AD_Table)MTable.get(getCtx(), org.compiere.model.I_AD_Table.Table_Name)
-			.getPO(getAD_Table_ID(), get_TrxName());	}
+	{
+		return (org.compiere.model.I_AD_Table)MTable.get(getCtx(), org.compiere.model.I_AD_Table.Table_ID)
+			.getPO(getAD_Table_ID(), get_TrxName());
+	}
 
 	/** Set Table.
-		@param AD_Table_ID 
-		Database Table information
-	  */
+		@param AD_Table_ID Database Table information
+	*/
 	public void setAD_Table_ID (int AD_Table_ID)
 	{
-		if (AD_Table_ID < 1) 
+		if (AD_Table_ID < 1)
 			set_Value (COLUMNNAME_AD_Table_ID, null);
-		else 
+		else
 			set_Value (COLUMNNAME_AD_Table_ID, Integer.valueOf(AD_Table_ID));
 	}
 
 	/** Get Table.
 		@return Database Table information
 	  */
-	public int getAD_Table_ID () 
+	public int getAD_Table_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_AD_Table_ID);
 		if (ii == null)
@@ -134,9 +187,8 @@ public class X_JP_CustomDeleteProfileLine extends PO implements I_JP_CustomDelet
 	}
 
 	/** Set Description.
-		@param Description 
-		Optional short description of the record
-	  */
+		@param Description Optional short description of the record
+	*/
 	public void setDescription (String Description)
 	{
 		set_Value (COLUMNNAME_Description, Description);
@@ -145,24 +197,25 @@ public class X_JP_CustomDeleteProfileLine extends PO implements I_JP_CustomDelet
 	/** Get Description.
 		@return Optional short description of the record
 	  */
-	public String getDescription () 
+	public String getDescription()
 	{
 		return (String)get_Value(COLUMNNAME_Description);
 	}
 
 	/** Set Custom Delete Profile Line.
-		@param JP_CustomDeleteProfileLine_ID Custom Delete Profile Line	  */
+		@param JP_CustomDeleteProfileLine_ID Custom Delete Profile Line
+	*/
 	public void setJP_CustomDeleteProfileLine_ID (int JP_CustomDeleteProfileLine_ID)
 	{
-		if (JP_CustomDeleteProfileLine_ID < 1) 
+		if (JP_CustomDeleteProfileLine_ID < 1)
 			set_ValueNoCheck (COLUMNNAME_JP_CustomDeleteProfileLine_ID, null);
-		else 
+		else
 			set_ValueNoCheck (COLUMNNAME_JP_CustomDeleteProfileLine_ID, Integer.valueOf(JP_CustomDeleteProfileLine_ID));
 	}
 
 	/** Get Custom Delete Profile Line.
 		@return Custom Delete Profile Line	  */
-	public int getJP_CustomDeleteProfileLine_ID () 
+	public int getJP_CustomDeleteProfileLine_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_JP_CustomDeleteProfileLine_ID);
 		if (ii == null)
@@ -171,7 +224,8 @@ public class X_JP_CustomDeleteProfileLine extends PO implements I_JP_CustomDelet
 	}
 
 	/** Set JP_CustomDeleteProfileLine_UU.
-		@param JP_CustomDeleteProfileLine_UU JP_CustomDeleteProfileLine_UU	  */
+		@param JP_CustomDeleteProfileLine_UU JP_CustomDeleteProfileLine_UU
+	*/
 	public void setJP_CustomDeleteProfileLine_UU (String JP_CustomDeleteProfileLine_UU)
 	{
 		set_ValueNoCheck (COLUMNNAME_JP_CustomDeleteProfileLine_UU, JP_CustomDeleteProfileLine_UU);
@@ -179,29 +233,31 @@ public class X_JP_CustomDeleteProfileLine extends PO implements I_JP_CustomDelet
 
 	/** Get JP_CustomDeleteProfileLine_UU.
 		@return JP_CustomDeleteProfileLine_UU	  */
-	public String getJP_CustomDeleteProfileLine_UU () 
+	public String getJP_CustomDeleteProfileLine_UU()
 	{
 		return (String)get_Value(COLUMNNAME_JP_CustomDeleteProfileLine_UU);
 	}
 
 	public I_JP_CustomDeleteProfile getJP_CustomDeleteProfile() throws RuntimeException
-    {
-		return (I_JP_CustomDeleteProfile)MTable.get(getCtx(), I_JP_CustomDeleteProfile.Table_Name)
-			.getPO(getJP_CustomDeleteProfile_ID(), get_TrxName());	}
+	{
+		return (I_JP_CustomDeleteProfile)MTable.get(getCtx(), I_JP_CustomDeleteProfile.Table_ID)
+			.getPO(getJP_CustomDeleteProfile_ID(), get_TrxName());
+	}
 
 	/** Set Custom Delete Profile.
-		@param JP_CustomDeleteProfile_ID Custom Delete Profile	  */
+		@param JP_CustomDeleteProfile_ID Custom Delete Profile
+	*/
 	public void setJP_CustomDeleteProfile_ID (int JP_CustomDeleteProfile_ID)
 	{
-		if (JP_CustomDeleteProfile_ID < 1) 
+		if (JP_CustomDeleteProfile_ID < 1)
 			set_ValueNoCheck (COLUMNNAME_JP_CustomDeleteProfile_ID, null);
-		else 
+		else
 			set_ValueNoCheck (COLUMNNAME_JP_CustomDeleteProfile_ID, Integer.valueOf(JP_CustomDeleteProfile_ID));
 	}
 
 	/** Get Custom Delete Profile.
 		@return Custom Delete Profile	  */
-	public int getJP_CustomDeleteProfile_ID () 
+	public int getJP_CustomDeleteProfile_ID()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_JP_CustomDeleteProfile_ID);
 		if (ii == null)
@@ -209,8 +265,17 @@ public class X_JP_CustomDeleteProfileLine extends PO implements I_JP_CustomDelet
 		return ii.intValue();
 	}
 
+    /** Get Record ID/ColumnName
+        @return ID/ColumnName pair
+      */
+    public KeyNamePair getKeyNamePair()
+    {
+        return new KeyNamePair(get_ID(), String.valueOf(getJP_CustomDeleteProfile_ID()));
+    }
+
 	/** Set Foreign Key ID.
-		@param JP_ForeignKey_Value Foreign Key ID	  */
+		@param JP_ForeignKey_Value Foreign Key ID
+	*/
 	public void setJP_ForeignKey_Value (int JP_ForeignKey_Value)
 	{
 		set_Value (COLUMNNAME_JP_ForeignKey_Value, Integer.valueOf(JP_ForeignKey_Value));
@@ -218,7 +283,7 @@ public class X_JP_CustomDeleteProfileLine extends PO implements I_JP_CustomDelet
 
 	/** Get Foreign Key ID.
 		@return Foreign Key ID	  */
-	public int getJP_ForeignKey_Value () 
+	public int getJP_ForeignKey_Value()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_JP_ForeignKey_Value);
 		if (ii == null)
@@ -226,22 +291,23 @@ public class X_JP_CustomDeleteProfileLine extends PO implements I_JP_CustomDelet
 		return ii.intValue();
 	}
 
+	/** Mandatory = true ? Delete : NULL = IDN */
+	public static final String JP_TREATFOREIGNKEY_MandatoryEqTrueDeleteNULL = "IDN";
+	/** Mandatory = true ? Delete : Value = IDV */
+	public static final String JP_TREATFOREIGNKEY_MandatoryEqTrueDeleteValue = "IDV";
+	/** Mandatory = true ? Value : Delete = IVD */
+	public static final String JP_TREATFOREIGNKEY_MandatoryEqTrueValueDelete = "IVD";
+	/** Mandatory = true ? Value : NULL = IVN */
+	public static final String JP_TREATFOREIGNKEY_MandatoryEqTrueValueNULL = "IVN";
+	/** Delete Records = TDE */
+	public static final String JP_TREATFOREIGNKEY_DeleteRecords = "TDE";
 	/** Set NULL = TSN */
 	public static final String JP_TREATFOREIGNKEY_SetNULL = "TSN";
 	/** Set Value = TSV */
 	public static final String JP_TREATFOREIGNKEY_SetValue = "TSV";
-	/** Delete Records = TDE */
-	public static final String JP_TREATFOREIGNKEY_DeleteRecords = "TDE";
-	/** Mandatory = true ? Delete : Value = IDV */
-	public static final String JP_TREATFOREIGNKEY_MandatoryEqTrueDeleteValue = "IDV";
-	/** Mandatory = true ? Delete : NULL = IDN */
-	public static final String JP_TREATFOREIGNKEY_MandatoryEqTrueDeleteNULL = "IDN";
-	/** Mandatory = true ? Value : NULL = IVN */
-	public static final String JP_TREATFOREIGNKEY_MandatoryEqTrueValueNULL = "IVN";
-	/** Mandatory = true ? Value : Delete = IVD */
-	public static final String JP_TREATFOREIGNKEY_MandatoryEqTrueValueDelete = "IVD";
 	/** Set Treat of Foreign Key.
-		@param JP_TreatForeignKey Treat of Foreign Key	  */
+		@param JP_TreatForeignKey Treat of Foreign Key
+	*/
 	public void setJP_TreatForeignKey (String JP_TreatForeignKey)
 	{
 
@@ -250,15 +316,14 @@ public class X_JP_CustomDeleteProfileLine extends PO implements I_JP_CustomDelet
 
 	/** Get Treat of Foreign Key.
 		@return Treat of Foreign Key	  */
-	public String getJP_TreatForeignKey () 
+	public String getJP_TreatForeignKey()
 	{
 		return (String)get_Value(COLUMNNAME_JP_TreatForeignKey);
 	}
 
 	/** Set Sequence.
-		@param SeqNo 
-		Method of ordering records; lowest number comes first
-	  */
+		@param SeqNo Method of ordering records; lowest number comes first
+	*/
 	public void setSeqNo (int SeqNo)
 	{
 		set_Value (COLUMNNAME_SeqNo, Integer.valueOf(SeqNo));
@@ -267,7 +332,7 @@ public class X_JP_CustomDeleteProfileLine extends PO implements I_JP_CustomDelet
 	/** Get Sequence.
 		@return Method of ordering records; lowest number comes first
 	  */
-	public int getSeqNo () 
+	public int getSeqNo()
 	{
 		Integer ii = (Integer)get_Value(COLUMNNAME_SeqNo);
 		if (ii == null)

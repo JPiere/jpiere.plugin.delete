@@ -23,7 +23,7 @@ import org.compiere.util.KeyNamePair;
 
 /** Generated Interface for JP_DeleteProfile
  *  @author iDempiere (generated) 
- *  @version Release 3.1
+ *  @version Release 12
  */
 @SuppressWarnings("all")
 public interface I_JP_DeleteProfile 
@@ -46,8 +46,8 @@ public interface I_JP_DeleteProfile
     /** Column name AD_Client_ID */
     public static final String COLUMNNAME_AD_Client_ID = "AD_Client_ID";
 
-	/** Get Client.
-	  * Client/Tenant for this installation.
+	/** Get Tenant.
+	  * Tenant for this installation.
 	  */
 	public int getAD_Client_ID();
 
@@ -55,12 +55,12 @@ public interface I_JP_DeleteProfile
     public static final String COLUMNNAME_AD_Org_ID = "AD_Org_ID";
 
 	/** Set Organization.
-	  * Organizational entity within client
+	  * Organizational entity within tenant
 	  */
 	public void setAD_Org_ID (int AD_Org_ID);
 
 	/** Get Organization.
-	  * Organizational entity within client
+	  * Organizational entity within tenant
 	  */
 	public int getAD_Org_ID();
 
@@ -163,10 +163,10 @@ public interface I_JP_DeleteProfile
     /** Column name JP_Delete_Client */
     public static final String COLUMNNAME_JP_Delete_Client = "JP_Delete_Client";
 
-	/** Set Delete or Initialize Client	  */
+	/** Set Delete or Initialize Tenant	  */
 	public void setJP_Delete_Client (String JP_Delete_Client);
 
-	/** Get Delete or Initialize Client	  */
+	/** Get Delete or Initialize Tenant	  */
 	public String getJP_Delete_Client();
 
     /** Column name JP_M_Product_ID_Where */
