@@ -282,7 +282,10 @@ public class JPiereDeleteClientRecords extends SvrProcess
 			executeUpdateConstraint("O");
 			commitEx();
 		}
-
+		
+		//Check of Foreign Key Constraint
+		foreignKeyConstraintCheck();
+		
 		if(Util.isEmpty(message.toString()))
 			message.append(Msg.getMsg(getCtx(), Msg.getMsg(getCtx(), "Success")));
 		else
@@ -296,6 +299,138 @@ public class JPiereDeleteClientRecords extends SvrProcess
 
 	}	//	delete
 
+	/**
+	 * Check of Foreign Key Constraint
+	 * 
+	 */
+	private void foreignKeyConstraintCheck()
+	{
+		addLog("##### CHECK OF FOREIGN KEY CONSTRAINT #####");
+		createLog("","","##### CHECK OF FOREIGN KEY CONSTRAINT #####","","","",false);
+		
+        String generatorSql =
+                "SELECT con.conname AS constraint_name, " +
+                "       nc.nspname  AS child_schema, " +
+                "       c.relname   AS child_table, " +
+                "       a.attname   AS child_column, " +
+                "       pnc.nspname AS parent_schema, " +
+                "       p.relname   AS parent_table, " +
+                "       pa.attname  AS parent_column, " +
+                "       'SELECT * FROM ' " +
+                "         || quote_ident(nc.nspname) || '.' || quote_ident(c.relname) " +
+                "         || ' WHERE ' || quote_ident(a.attname) || ' IS NOT NULL' " +
+                "         || ' AND ' || quote_ident(a.attname) " +
+                "         || ' NOT IN (SELECT ' || quote_ident(pa.attname) " +
+                "         || ' FROM ' || quote_ident(pnc.nspname) || '.' || quote_ident(p.relname) || ');' " +
+                "         AS check_sql " +
+                "FROM pg_constraint con " +
+                "JOIN pg_class c       ON con.conrelid     = c.oid " +
+                "JOIN pg_namespace nc  ON c.relnamespace   = nc.oid " +
+                "JOIN pg_attribute a   ON a.attrelid       = c.oid AND a.attnum = ANY (con.conkey) " +
+                "JOIN pg_class p       ON con.confrelid    = p.oid " +
+                "JOIN pg_namespace pnc ON p.relnamespace   = pnc.oid " +
+                "JOIN pg_attribute pa  ON pa.attrelid      = p.oid AND pa.attnum = ANY (con.confkey) " +
+                "WHERE con.contype = 'f' " +
+                "  AND nc.nspname = 'adempiere' " +
+                "ORDER BY nc.nspname, c.relname, con.conname";
+        
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try
+		{
+			pstmt = DB.prepareStatement(generatorSql, get_TrxName());
+			rs = pstmt.executeQuery();
+			while (rs.next()) 
+			{
+                String constraintName = rs.getString("constraint_name");
+                String childTable     = rs.getString("child_table");
+                String childColumn    = rs.getString("child_column");
+                String checkSql       = rs.getString("check_sql");
+                
+        		MTable m_Table = MTable.get(getCtx(), childTable);
+        		
+        		PreparedStatement pstmt2 = null;
+        		ResultSet rs2 = null;
+                try 
+                {
+                	pstmt2 = DB.prepareStatement(checkSql, get_TrxName());
+                	rs2 = pstmt2.executeQuery();
+                	int count = 0;
+                    while (rs2.next())
+                    {
+                    	count++;
+                		if(m_Table == null || m_Table.get_ID() == 0)
+                		{
+                			createLog(null, null
+                					, Msg.getMsg(getCtx(), "Warning")  + " : " +  "Inconsistency FK Constraint Record ID: " + rs2.getObject(1).toString()
+                						+ " -> CONSTRAINT NAME: " + constraintName
+                						+ " - TABLE(Not registered in the Application Dictionary): " + childTable + " - COLUMN: " +childColumn 
+                					, checkSql, "", "Check of FK Constraint: " + constraintName, false);
+                		}else {
+                			createLog(childTable, childColumn
+                					, Msg.getMsg(getCtx(), "Warning") + " : " + "Inconsistency FK Constraint Record ID: " + rs2.getObject(1).toString()
+           								+" -> CONSTRAINT NAME: " + constraintName 
+           								+ " - TABLE: " + childTable + " - COLUMN: " + childColumn
+                					, checkSql, "", "Check of FK Constraint: " + constraintName, false);
+                		}
+                		
+                    }//while2
+                    
+                    if (count > 0) 
+                    {
+                		if(m_Table == null || m_Table.get_ID() == 0)
+                		{
+                			String msg = Msg.getMsg(getCtx(), "Warning") + " : " + "Inconsistency FK Constraint Records: Total " + count 
+                							+ " -> CONSTRAINT NAME: " + constraintName
+                							+ " - TABLE(Not registered in the Application Dictionary): " + childTable + " - COLUMN: " +childColumn;
+                							
+                			addLog(msg);
+                			createLog(null, null, msg, checkSql, "", "Check of FK Constraint: " + constraintName, false);
+                			
+                		}else {
+                   			String msg =  Msg.getMsg(getCtx(), "Warning") + " : " +  "Inconsistency FK Constraint Records: Total " + count
+                   							+" -> CONSTRAINT NAME: " + constraintName 
+                   							+ " - TABLE: " + childTable + " - COLUMN: " + childColumn;
+                			addLog(msg);
+                			createLog(childTable, childColumn, msg, checkSql, "", "Check of FK Constraint: " + constraintName, false);
+                		}
+                		
+                    } else {
+                    	
+                    	if(p_IsAllowLogging)
+                    	{
+                    		if(m_Table == null || m_Table.get_ID() == 0)
+                    		{
+                    			String msg = "OK (No Inconsistency) -> CONSTRAINT NAME: " + constraintName + " - TABLE(Not registered in the Application Dictionary): " + childTable + " - COLUMN " + childColumn;
+                    			createLog(null, null, msg, checkSql, "", "Check of FK Constraint: " + constraintName, false);
+                    			
+                    		}else {
+                       			String msg = "OK (No Inconsistency) -> CONSTRAINT NAME: " + constraintName + " - TABLE: " + childTable + " - COLUMN: " + childColumn;;
+                    			createLog(childTable, childColumn, msg, checkSql, "", "Check of FK Constraint: " + constraintName, false);
+                    		}                   		
+                    	}
+                    }
+
+                }catch (SQLException e){
+                	log.saveError("Error", "foreignKeyConstraintCheck()");
+                	addLog(Msg.getMsg(getCtx(), "Error") + " foreignKeyConstraintCheck()" );
+                	createLog(null, null, Msg.getMsg(getCtx(), "Error") + " foreignKeyConstraintCheck()","","","",false);
+        		} finally {
+        			DB.close(rs2, pstmt2);
+        			rs2 = null; pstmt2 = null;
+        		}
+                
+            }//while1
+			
+		}catch (SQLException e){
+			log.saveError("Error", "foreignKeyConstraintCheck()");
+			addLog(Msg.getMsg(getCtx(), "Error") + " foreignKeyConstraintCheck()" );
+			createLog(null, null, Msg.getMsg(getCtx(), "Error") + " foreignKeyConstraintCheck()","","","",false);
+		} finally {
+			DB.close(rs, pstmt);
+			rs = null; pstmt = null;
+		}
+	}
 
 	/***************Main Logic***************/
 	/**
