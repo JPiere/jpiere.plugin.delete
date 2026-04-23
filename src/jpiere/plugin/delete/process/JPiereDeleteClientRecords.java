@@ -265,6 +265,9 @@ public class JPiereDeleteClientRecords extends SvrProcess
 			msg = doAfterCheck(p_JP_Delete_Client);
 			message.append(msg);
 
+			//Check of Foreign Key Constraint
+			foreignKeyConstraintCheck(false);
+			
 		}catch (Exception e){
 			message.append("--------> Plese Check Process Log");
 			if(e instanceof DBException)
@@ -283,8 +286,8 @@ public class JPiereDeleteClientRecords extends SvrProcess
 			commitEx();
 		}
 		
-		//Check of Foreign Key Constraint
-		foreignKeyConstraintCheck();
+		//Last Check of Foreign Key Constraint
+		foreignKeyConstraintCheck(true);
 		
 		if(Util.isEmpty(message.toString()))
 			message.append(Msg.getMsg(getCtx(), Msg.getMsg(getCtx(), "Success")));
@@ -301,12 +304,19 @@ public class JPiereDeleteClientRecords extends SvrProcess
 
 	/**
 	 * Check of Foreign Key Constraint
+	 * @throws Exception 
 	 * 
 	 */
-	private void foreignKeyConstraintCheck()
+	private void foreignKeyConstraintCheck(boolean isLastCheck) throws Exception
 	{
-		addLog("##### CHECK OF FOREIGN KEY CONSTRAINT #####");
-		createLog("","","##### CHECK OF FOREIGN KEY CONSTRAINT #####","","","",false);
+		if(isLastCheck)
+		{
+			addLog("##### CHECK OF FOREIGN KEY CONSTRAINT - Last #####");
+			createLog("","","### CHECK OF FOREIGN KEY CONSTRAINT - Last #####","","","",false);			
+		}else {
+			addLog("##### CHECK OF FOREIGN KEY CONSTRAINT - First Time ###");
+			createLog("","","### CHECK OF FOREIGN KEY CONSTRAINT - First Time ###","","","",false);
+		}
 		
         String generatorSql =
                 "SELECT con.conname AS constraint_name, " +
@@ -355,60 +365,120 @@ public class JPiereDeleteClientRecords extends SvrProcess
                 {
                 	pstmt2 = DB.prepareStatement(checkSql, get_TrxName());
                 	rs2 = pstmt2.executeQuery();
-                	int count = 0;
+                	int warningCounter = 0;
+                	int record_ID = 0;
                     while (rs2.next())
                     {
-                    	count++;
+                    	warningCounter++;
+                    	if(isLastCheck)
+                    		continue;
+                    	
                 		if(m_Table == null || m_Table.get_ID() == 0)
                 		{
                 			createLog(null, null
-                					, Msg.getMsg(getCtx(), "Warning")  + " : " +  "Inconsistency FK Constraint Record ID: " + rs2.getObject(1).toString()
+                					, Msg.getMsg(getCtx(), "Warning")  + " : " +  "Inconsistency in FK Constraint: " + warningCounter
                 						+ " -> CONSTRAINT NAME: " + constraintName
                 						+ " - TABLE(Not registered in the Application Dictionary): " + childTable + " - COLUMN: " +childColumn 
                 					, checkSql, "", "Check of FK Constraint: " + constraintName, false);
+            				
                 		}else {
-                			createLog(childTable, childColumn
-                					, Msg.getMsg(getCtx(), "Warning") + " : " + "Inconsistency FK Constraint Record ID: " + rs2.getObject(1).toString()
-           								+" -> CONSTRAINT NAME: " + constraintName 
-           								+ " - TABLE: " + childTable + " - COLUMN: " + childColumn
-                					, checkSql, "", "Check of FK Constraint: " + constraintName, false);
-                		}
-                		
+                			
+	                    	MColumn columnPK = MColumn.get(getCtx(), childTable, childTable + "_ID");
+	                    	if(columnPK == null)
+	                    	{
+	                    		record_ID = 0;
+	                			createLog(null, null
+	                					, Msg.getMsg(getCtx(), "Warning")  + " : " +  "Inconsistency in FK constraint: the column <TableName>_ID does not exist in this table: " + warningCounter
+	                						+ " -> CONSTRAINT NAME: " + constraintName
+	                						+ " - TABLE(Not registered in the Application Dictionary): " + childTable + " - COLUMN: " +childColumn 
+	                					, checkSql, "", "Check of FK Constraint: " + constraintName, false);
+	                			
+	                    	}else {
+	                    		
+	                    		record_ID = rs2.getInt(childTable + "_ID"); 
+	                			
+	                			createLog(childTable, childColumn
+	                					, Msg.getMsg(getCtx(), "Warning") + " : " + "Inconsistency in FK Constraint: Record ID = " + record_ID
+	           								+" -> CONSTRAINT NAME: " + constraintName 
+	           								+ " - TABLE: " + childTable + " - COLUMN: " + childColumn
+	                					, checkSql, "", "Check of FK Constraint: " + constraintName, false);
+	                			
+	                			//Automatic Repair
+	                			MColumn column = MColumn.get(getCtx(), childTable, childColumn);
+	                			if(MColumn.FKCONSTRAINTTYPE_SetNull.equals(column.getFKConstraintType()))
+	                			{
+	                				String updateSQL = "UPDATE " + childTable + " SET " + childColumn + " = null WHERE "+ childTable +"_ID = " + record_ID ;
+	                				int no = DB.executeUpdate(updateSQL, get_TrxName());
+	                				if(no == 1)
+	                				{
+	                        			createLog(childTable, childColumn
+	                        					, "OK (Automatic Repair) -> Set NULL to Record ID = " + record_ID
+	                   								+ " - TABLE: " + childTable + " - COLUMN: " + childColumn
+	                        					, updateSQL, "", "Check of FK Constraint: " + constraintName, false);
+	                					
+	                				}else {
+	                					throw new Exception(Msg.getMsg(getCtx(), "JP_UnexpectedError") + " : Automatic Repair FK constraint Set NULL SQL -> " + updateSQL);//Unexpected Error
+	                				}
+	                				
+	                			}else if(MColumn.FKCONSTRAINTTYPE_ModelCascade.equals(column.getFKConstraintType()) || MColumn.FKCONSTRAINTTYPE_Cascade.equals(column.getFKConstraintType()) ) {
+	                				
+	                				String deleteSQL = "DELETE FROM " + childTable + " WHERE "+ childTable +"_ID = " + record_ID ;
+	                				int no = DB.executeUpdate(deleteSQL, get_TrxName());
+	                				if(no == 1)
+	                				{
+	                        			createLog(childTable, childColumn
+	                        					, "OK (Automatic Repair) -> Delete Record ID = " + record_ID
+	                   								+ " - TABLE: " + childTable + " - COLUMN: " + childColumn
+	                        					, deleteSQL, "", "Check of FK Constraint: " + constraintName, false);
+	                					
+	                				}else {
+	                					throw new Exception(Msg.getMsg(getCtx(), "JP_UnexpectedError")+" : Automatic Repair FK constraint DELETE SQL -> " + deleteSQL);//Unexpected Error
+	                				}
+	                			}
+	                		}//if(columnPK == null)
+                		}//if(m_Table == null || m_Table.get_ID() == 0)
                     }//while2
                     
-                    if (count > 0) 
+                    if(isLastCheck)
                     {
-                		if(m_Table == null || m_Table.get_ID() == 0)
-                		{
-                			String msg = Msg.getMsg(getCtx(), "Warning") + " : " + "Inconsistency FK Constraint Records: Total " + count 
-                							+ " -> CONSTRAINT NAME: " + constraintName
-                							+ " - TABLE(Not registered in the Application Dictionary): " + childTable + " - COLUMN: " +childColumn;
-                							
-                			addLog(msg);
-                			createLog(null, null, msg, checkSql, "", "Check of FK Constraint: " + constraintName, false);
-                			
-                		}else {
-                   			String msg =  Msg.getMsg(getCtx(), "Warning") + " : " +  "Inconsistency FK Constraint Records: Total " + count
-                   							+" -> CONSTRAINT NAME: " + constraintName 
-                   							+ " - TABLE: " + childTable + " - COLUMN: " + childColumn;
-                			addLog(msg);
-                			createLog(childTable, childColumn, msg, checkSql, "", "Check of FK Constraint: " + constraintName, false);
-                		}
-                		
-                    } else {
-                    	
-                    	if(p_IsAllowLogging)
-                    	{
-                    		if(m_Table == null || m_Table.get_ID() == 0)
-                    		{
-                    			String msg = "OK (No Inconsistency) -> CONSTRAINT NAME: " + constraintName + " - TABLE(Not registered in the Application Dictionary): " + childTable + " - COLUMN " + childColumn;
-                    			createLog(null, null, msg, checkSql, "", "Check of FK Constraint: " + constraintName, false);
-                    			
-                    		}else {
-                       			String msg = "OK (No Inconsistency) -> CONSTRAINT NAME: " + constraintName + " - TABLE: " + childTable + " - COLUMN: " + childColumn;;
-                    			createLog(childTable, childColumn, msg, checkSql, "", "Check of FK Constraint: " + constraintName, false);
-                    		}                   		
-                    	}
+	                    if (warningCounter > 0) 
+	                    {
+	                		if(m_Table == null || m_Table.get_ID() == 0)
+	                		{
+	                			String msg = Msg.getMsg(getCtx(), "JP_ToBeConfirmed") + " : " 
+	                							+ "Inconsistency FK Constraint Records: Total " + warningCounter 
+	                							+ " -> CONSTRAINT NAME: " + constraintName
+	                							+ " - TABLE(Not registered in the Application Dictionary): " + childTable + " - COLUMN: " +childColumn;
+	                							
+	                			addLog(msg);
+	                			createLog(null, null, msg, checkSql, "", "Check of FK Constraint: " + constraintName, false);
+	                			
+	                		}else {
+	                			
+	                   			String msg =  Msg.getMsg(getCtx(), "JP_ToBeConfirmed") + " : "
+	                   							+  " Inconsistency FK Constraint Records: Total " + warningCounter
+	                   							+" -> CONSTRAINT NAME: " + constraintName 
+	                   							+ " - TABLE: " + childTable + " - COLUMN: " + childColumn;
+	                			addLog(msg);
+	                			createLog(childTable, childColumn, msg, checkSql, "", "Check of FK Constraint: " + constraintName, false);
+		                		
+	                		}
+	                		
+	                    } else {
+	                    	
+	                    	if(p_IsAllowLogging)
+	                    	{
+	                    		if(m_Table == null || m_Table.get_ID() == 0)
+	                    		{
+	                    			String msg = "OK (No Inconsistency) -> CONSTRAINT NAME: " + constraintName + " - TABLE(Not registered in the Application Dictionary): " + childTable + " - COLUMN " + childColumn;
+	                    			createLog(null, null, msg, checkSql, "", "Check of FK Constraint: " + constraintName, false);
+	                    			
+	                    		}else {
+	                       			String msg = "OK (No Inconsistency) -> CONSTRAINT NAME: " + constraintName + " - TABLE: " + childTable + " - COLUMN: " + childColumn;;
+	                    			createLog(childTable, childColumn, msg, checkSql, "", "Check of FK Constraint: " + constraintName, false);
+	                    		}                   		
+	                    	}
+	                    }//if(isLastCheck)
                     }
 
                 }catch (SQLException e){
@@ -1581,8 +1651,8 @@ public class JPiereDeleteClientRecords extends SvrProcess
 		createLog("","","####### DELETE AD_Org TABLE #######", "","","", true);
 		executeDeleteSQL("AD_Org", createWhereInIDs("AD_Org_ID", AD_Org_IDs, WHERE_NOT_IN), TYPE_INITIALIZE_CLIENT, false,"DELETE_ORG");
 
-		commitEx();
-		createLog("", "", "COMMIT", "", "", "",false);
+		//commitEx();
+		//createLog("", "", "COMMIT", "", "", "",false);
 
 		//Bank Account
 		createLog("","","####### DELETE RECORDS OR SET NULL TO FK COLUMN THAT REFFERED RECORD OF C_BANKACCOUNT TABLE #######", "","","", true);
