@@ -51,7 +51,7 @@ import jpiere.plugin.delete.model.MDeleteClientLogJP;
 import jpiere.plugin.delete.model.MDeleteProfile;
 
 /**
- * 	Process of Initialize Client and Delete Client.
+ *  JPIERE-0158: Process of Initialize Client and Delete Client.
  *  (PostgreSQL only)
  *
  *  This process was developed in reference to "drop_client.sql".
@@ -265,7 +265,7 @@ public class JPiereDeleteClientRecords extends SvrProcess
 			msg = doAfterCheck(p_JP_Delete_Client);
 			message.append(msg);
 
-			//Check of Foreign Key Constraint
+			//Check of Foreign Key Constraint - First Time
 			foreignKeyConstraintCheck(false);
 			
 		}catch (Exception e){
@@ -286,7 +286,7 @@ public class JPiereDeleteClientRecords extends SvrProcess
 			commitEx();
 		}
 		
-		//Last Check of Foreign Key Constraint
+		//Last Check of Foreign Key Constraint - Last
 		foreignKeyConstraintCheck(true);
 		
 		if(Util.isEmpty(message.toString()))
@@ -314,7 +314,7 @@ public class JPiereDeleteClientRecords extends SvrProcess
 			addLog("##### CHECK OF FOREIGN KEY CONSTRAINT - Last #####");
 			createLog("","","### CHECK OF FOREIGN KEY CONSTRAINT - Last #####","","","",false);			
 		}else {
-			addLog("##### CHECK OF FOREIGN KEY CONSTRAINT - First Time ###");
+			addLog("### CHECK OF FOREIGN KEY CONSTRAINT - First Time ###");
 			createLog("","","### CHECK OF FOREIGN KEY CONSTRAINT - First Time ###","","","",false);
 		}
 		
