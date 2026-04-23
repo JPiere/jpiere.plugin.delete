@@ -957,8 +957,8 @@ public class JPiereDeleteClientRecords extends SvrProcess
 
 		}//for(String AD_TABLE : TABLELIST_AD)
 
-		commitEx();
-		createLog("", "", "COMMIT", "", "", "",false);
+		//commitEx();
+		//createLog("", "", "COMMIT", "", "", "",false);
 
 		Tables_DeleteAllRecords = stringArray_Merge(list_of_DeleteTables.toArray(new String[list_of_DeleteTables.size()]),TrxTables);
 		Tables_Not_DeleteAllRecords = stringArray_Subtraction(TABLELIST_AD.toArray(new String[TABLELIST_AD.size()]), Tables_DeleteAllRecords);
@@ -998,8 +998,8 @@ public class JPiereDeleteClientRecords extends SvrProcess
 			bulkUpdate_Log(returnInt, table, DEBUG_BULK_UPDATE_LOG);
 		}
 
-		commitEx();
-		createLog("", "", "COMMIT", "", "", "",false);
+		//commitEx();
+		//createLog("", "", "COMMIT", "", "", "",false);
 
 		//Delete Organization
 		deleteOrg(m_DeleteProfile.getJP_AD_Org_ID_Where());
