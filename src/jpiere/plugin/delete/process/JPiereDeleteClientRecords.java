@@ -434,6 +434,8 @@ public class JPiereDeleteClientRecords extends SvrProcess
 	                				}else {
 	                					throw new Exception(Msg.getMsg(getCtx(), "JP_UnexpectedError")+" : Automatic Repair FK constraint DELETE SQL -> " + deleteSQL);//Unexpected Error
 	                				}
+	                				
+	                				//TODO ここで削除したレコードを参照しているレコードに対してもNULLをセットするか削除する必要がある。でも削除した場合さらにそのレコードを参照しているレコードに対しても同様の処理を行う必要があり循環しないとけいないので、とりあえず現状では未実装。
 	                			}
 	                		}//if(columnPK == null)
                 		}//if(m_Table == null || m_Table.get_ID() == 0)
