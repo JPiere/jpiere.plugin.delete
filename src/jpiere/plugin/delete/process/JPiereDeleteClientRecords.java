@@ -277,10 +277,10 @@ public class JPiereDeleteClientRecords extends SvrProcess
 				addLog(dbe.toString());
 				createLog("","",dbe.getMessage() +"  SQL: " + dbe.getSQL(),"","","",false);
 			}else{
-				addLog(e.toString());
-				createLog("","",e.toString(), "","","", false);
+				addLog(e.toString() + " -> " + e.getCause());
+				createLog("","",e.toString() + " -> " + e.getCause(), "","","", false);
 			}
-			throw new Exception(e.toString() + message.toString());
+			throw new Exception(e.toString() + " -> " + e.getCause() + message.toString());
 		} finally {
 			executeUpdateConstraint("O");
 			commitEx();
