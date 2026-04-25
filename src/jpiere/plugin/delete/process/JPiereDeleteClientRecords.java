@@ -266,7 +266,7 @@ public class JPiereDeleteClientRecords extends SvrProcess
 			message.append(msg);
 
 			//Check of Foreign Key Constraint - First Time
-			foreignKeyConstraintCheck(false);
+			foreignKeyConstraintCheck(p_JP_Delete_Client, false);
 			
 		}catch (Exception e){
 			message.append("--------> Plese Check Process Log");
@@ -287,10 +287,10 @@ public class JPiereDeleteClientRecords extends SvrProcess
 		}
 		
 		//Last Check of Foreign Key Constraint - Last
-		foreignKeyConstraintCheck(true);
+		foreignKeyConstraintCheck(p_JP_Delete_Client, true);
 		
 		if(Util.isEmpty(message.toString()))
-			message.append(Msg.getMsg(getCtx(), Msg.getMsg(getCtx(), "Success")));
+			message.append(Msg.getMsg(getCtx(), "Success"));
 		else
 			message.append("--------> Plese Check Process Log");
 
@@ -307,7 +307,7 @@ public class JPiereDeleteClientRecords extends SvrProcess
 	 * @throws Exception 
 	 * 
 	 */
-	private void foreignKeyConstraintCheck(boolean isLastCheck) throws Exception
+	private void foreignKeyConstraintCheck(String type, boolean isLastCheck) throws Exception
 	{
 		if(isLastCheck)
 		{
@@ -422,6 +422,20 @@ public class JPiereDeleteClientRecords extends SvrProcess
 	                				
 	                			}else if(MColumn.FKCONSTRAINTTYPE_ModelCascade.equals(column.getFKConstraintType()) || MColumn.FKCONSTRAINTTYPE_Cascade.equals(column.getFKConstraintType()) ) {
 	                				
+	                				//Delete or set NULL on the records of the foreign key tables
+	                				ArrayList<Integer> IDs = new ArrayList<>();
+	                				IDs.add(record_ID);
+
+	                				int returnInt = 0;
+	                				returnInt = bulkUpdate_canReferTableDirect(childTable, IDs, WHERE_IN, TREAT_IF_MANDATORY_DELETE_ELSE_NULL, 0
+	                						, Tables_Not_DeleteAllRecords, WHERE_IN, type);
+	                				bulkUpdate_Log(returnInt, childTable, DEBUG_BULK_UPDATE_LOG);
+
+	                				returnInt = bulkUpdate_canNotReferTableDirect(childTable, IDs, WHERE_IN, TREAT_IF_MANDATORY_DELETE_ELSE_NULL, 0
+	                						, Tables_Not_DeleteAllRecords, WHERE_IN, type);
+	                				bulkUpdate_Log(returnInt, childTable, DEBUG_BULK_UPDATE_LOG);
+	                				
+	                				//Delete Record.
 	                				String deleteSQL = "DELETE FROM " + childTable + " WHERE "+ childTable +"_ID = " + record_ID ;
 	                				int no = DB.executeUpdate(deleteSQL, get_TrxName());
 	                				if(no == 1)
@@ -433,9 +447,7 @@ public class JPiereDeleteClientRecords extends SvrProcess
 	                					
 	                				}else {
 	                					throw new Exception(Msg.getMsg(getCtx(), "JP_UnexpectedError")+" : Automatic Repair FK constraint DELETE SQL -> " + deleteSQL);//Unexpected Error
-	                				}
-	                				
-	                				//TODO ここで削除したレコードを参照しているレコードに対してもNULLをセットするか削除する必要がある。でも削除した場合さらにそのレコードを参照しているレコードに対しても同様の処理を行う必要があり循環しないとけいないので、とりあえず現状では未実装。
+	                				}	                				
 	                			}
 	                		}//if(columnPK == null)
                 		}//if(m_Table == null || m_Table.get_ID() == 0)
